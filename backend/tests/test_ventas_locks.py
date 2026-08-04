@@ -63,8 +63,9 @@ def test_select_for_update_bloquea_segunda_transaccion_hasta_el_commit():
         conn = psycopg2.connect(_APP_BACKEND_URL)
         cur = conn.cursor()
         cur.execute("SELECT set_config('app.current_gym_id', %s, true)", (str(gym_id),))
+        inicio_espera = time.monotonic()
         cur.execute("SELECT subtotal FROM ventas WHERE id = %s FOR UPDATE", (venta_id,))
-        eventos["c2_lock_adquirido"] = time.monotonic()
+        eventos["c2_espera_seg"] = time.monotonic() - inicio_espera
         conn.commit()
         cur.close()
         conn.close()
@@ -76,7 +77,12 @@ def test_select_for_update_bloquea_segunda_transaccion_hasta_el_commit():
     t1.join()
     t2.join()
 
-    # Si FOR UPDATE no bloqueara, c2 conseguiría el lock ni bien lo pide
-    # (~0.05s), mucho antes de que c1 haga commit a los ~0.3s. Con el lock
-    # real, c2 tiene que esperar a que c1 termine.
-    assert eventos["c2_lock_adquirido"] >= eventos["c1_commit"]
+    # Cuánto esperó conexion_2 su PROPIO SELECT FOR UPDATE, medido con su
+    # propio reloj — no se compara contra el timestamp de conexion_1 (eso
+    # comparaba relojes de dos conexiones/threads distintos justo en el
+    # instante en que Postgres libera el lock, una carrera de microsegundos
+    # que nunca se cruzó en local pero sí en el runner de CI, más compartido).
+    # Si FOR UPDATE no bloqueara, c2 conseguiría el lock casi al instante
+    # (unos pocos ms). Bloqueando de verdad, tiene que esperar los ~0.25s que
+    # le faltan a conexion_1 para terminar su sleep(0.3) + commit.
+    assert eventos["c2_espera_seg"] >= 0.2
