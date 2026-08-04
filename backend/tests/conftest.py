@@ -75,12 +75,13 @@ def client():
 
 def nuevo_client():
     """
-    base_url https, no http: set_auth_cookies() pone secure=not ES_LOCAL, y
-    ES_LOCAL es False acá a propósito (Postgres real, para que el listener
-    de RLS esté activo). Con scheme http el cookie jar de TestClient nunca
-    reenvía cookies Secure — no es un bug de la app, es que el "navegador"
-    de test tiene que parecer https para que el comportamiento real (cookies
-    seguras en todo lo que no es ES_LOCAL) se pueda probar sin debilitarlo.
+    base_url https, no http: set_auth_cookies() pone secure=not DEBUG, y
+    DEBUG es False acá a propósito (no se setea en los env vars de arriba —
+    Postgres real, para que el listener de RLS esté activo). Con scheme http
+    el cookie jar de TestClient nunca reenvía cookies Secure — no es un bug
+    de la app, es que el "navegador" de test tiene que parecer https para
+    que el comportamiento real (cookies seguras en todo lo que no es DEBUG)
+    se pueda probar sin debilitarlo.
     """
     from fastapi.testclient import TestClient
     return TestClient(main.app, base_url="https://testserver")

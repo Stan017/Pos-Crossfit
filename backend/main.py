@@ -11,7 +11,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from limiter import limiter
-from database import ES_LOCAL
+from database import DEBUG
 import os
 
 # request_id: generado por RequestIDMiddleware (más abajo) al inicio de cada
@@ -161,7 +161,7 @@ from auth import require_gym_activa
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    if not ES_LOCAL:
+    if not DEBUG:
         # No hay forma de arreglar esto sin saber dónde se va a deployar (todavía
         # sin decidir) — el fix real es migrar storage.py a un storage externo
         # (Supabase Storage, S3, etc.) cuando se sepa el destino. Mientras tanto,
@@ -180,11 +180,11 @@ app = FastAPI(
     description="Backend multi-tenant para gestión de boxes de CrossFit",
     version="1.0.0",
     lifespan=lifespan,
-    # ES_LOCAL = True solo en desarrollo (SQLite). En producción (Postgres)
-    # /docs, /redoc y el schema OpenAPI quedan deshabilitados.
-    docs_url=    "/docs"        if ES_LOCAL else None,
-    redoc_url=   "/redoc"       if ES_LOCAL else None,
-    openapi_url= "/openapi.json" if ES_LOCAL else None,
+    # DEBUG=true en .env habilita /docs, /redoc y el schema OpenAPI —
+    # deshabilitados por default (nunca en producción).
+    docs_url=    "/docs"        if DEBUG else None,
+    redoc_url=   "/redoc"       if DEBUG else None,
+    openapi_url= "/openapi.json" if DEBUG else None,
 )
 
 app.state.limiter = limiter

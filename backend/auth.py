@@ -22,7 +22,7 @@ from jose import JWTError, jwt
 from sqlalchemy import or_, and_
 from sqlalchemy.orm import Session
 
-from database import SessionLocal, ES_LOCAL, set_rls_gym_id
+from database import SessionLocal, DEBUG, set_rls_gym_id
 from models import Usuario, RefreshToken, Gimnasio, SaasEstado
 from services.suscripciones_service import sincronizar_estado_saas_en_db
 
@@ -73,7 +73,7 @@ if not JWT_SECRET:
 #   (a) el frontend hace proxy/rewrite de /api/* hacia el backend → mismo
 #       origen para el navegador, esto no se toca.
 #   (b) dominios realmente distintos → SameSite="none", secure=True siempre
-#       (ya no solo en no-ES_LOCAL), y agregar verificación de Origin/Referer
+#       (ya no solo en no-DEBUG), y agregar verificación de Origin/Referer
 #       en un middleware para requests que cambian estado, reemplazando la
 #       protección CSRF que Lax daba gratis.
 
@@ -87,7 +87,7 @@ def set_auth_cookies(response: Response, access_token: str, refresh_token: str) 
         value=access_token,
         max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
         httponly=True,
-        secure=not ES_LOCAL,
+        secure=not DEBUG,
         samesite="lax",
         path="/",
     )
@@ -96,7 +96,7 @@ def set_auth_cookies(response: Response, access_token: str, refresh_token: str) 
         value=refresh_token,
         max_age=REFRESH_TOKEN_EXPIRE_DAYS * 86400,
         httponly=True,
-        secure=not ES_LOCAL,
+        secure=not DEBUG,
         samesite="lax",
         # path="/" y no "/auth": el path que el navegador ve para este mismo
         # endpoint cambia según el entorno (en dev pasa por el proxy de Vite

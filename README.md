@@ -98,10 +98,9 @@ copy .env.example .env    # completar DATABASE_URL, JWT_SECRET, etc. (ver abajo)
 uvicorn main:app --reload
 ```
 
-Corre en `http://localhost:8000`. Swagger (`/docs`) está deshabilitado siempre
-en este proyecto — `ES_LOCAL` (resto de la migración desde PosRose) se
-calcula como `DATABASE_URL.startswith("sqlite")`, y acá `DATABASE_URL` es
-siempre Postgres, así que da `False` incluso en desarrollo.
+Corre en `http://localhost:8000`. Con `DEBUG=true` en `.env`, Swagger queda
+disponible en `/docs` (`/redoc` y `/openapi.json` también) — deshabilitado por
+default, y siempre debe quedar en `false` en producción.
 
 ### Frontends
 

@@ -19,7 +19,12 @@ engine = create_engine(DATABASE_URL, connect_args=connect_args, pool_pre_ping=Tr
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-ES_LOCAL = DATABASE_URL.startswith("sqlite")  # True en PC tienda, False en producción
+# DEBUG habilita /docs, /redoc, /openapi.json y cookies no-secure — para
+# desarrollo local con Postgres real. Nunca True en producción. Explícito vía
+# .env, no derivado de nada (a diferencia de un ES_LOCAL heredado de PosRose
+# que se calculaba de si DATABASE_URL era SQLite — este proyecto usa Postgres
+# siempre, SQLite no soporta JSONB/UUID/RLS que el schema necesita).
+DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 
 
 class Base(DeclarativeBase):
@@ -59,7 +64,7 @@ class Base(DeclarativeBase):
 # implícitamente después de un commit (ej. el refresh() post-commit que
 # disparó todo esto). set_config con is_local=true acá: se re-setea en cada
 # transacción de todos modos, no hace falta que sobreviva más que eso.
-if not ES_LOCAL:
+if not DEBUG:
     @event.listens_for(SessionLocal, "after_begin")
     def _set_rls_gym_id(session, transaction, connection):
         gym_id = session.info.get("rls_gym_id", "")
@@ -98,7 +103,7 @@ def get_db():
 # de nuevo después de cada commit.
 def set_rls_gym_id(db, gym_id) -> None:
     db.info["rls_gym_id"] = str(gym_id)
-    if not ES_LOCAL:
+    if not DEBUG:
         db.execute(
             text("SELECT set_config('app.current_gym_id', :gid, true)"),
             {"gid": str(gym_id)},
@@ -124,9 +129,8 @@ if PLATFORM_DATABASE_URL:
     platform_engine = create_engine(PLATFORM_DATABASE_URL, pool_pre_ping=True)
     PlatformSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=platform_engine)
 else:
-    # Local (SQLite) o mientras no se corrió la 029 todavía: no hay rol de
-    # bypass separado, así que las rutas de platform admin comparten la
-    # conexión normal. En ES_LOCAL no importa (RLS no existe en SQLite); si
+    # Mientras no se corrió la 029 todavía: no hay rol de bypass separado,
+    # así que las rutas de platform admin comparten la conexión normal. Si
     # PLATFORM_DATABASE_URL falta en producción, las rutas de platform admin
     # simplemente van a ver 0 filas en tablas con RLS hasta que se configure.
     PlatformSessionLocal = SessionLocal
