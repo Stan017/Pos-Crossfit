@@ -1,0 +1,190 @@
+/* ─────────────────────────────────────────────────────────────────
+   TIPOGRAFÍA
+   Boldonse       → logo PosRose (display, una sola palabra)
+   Google Sans Flex → UI general (body, labels, botones)
+   Outfit         → números y métricas (dashboard, precios)
+   ───────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Boldonse&family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=Outfit:wght@100..900&display=swap');
+
+/* ─────────────────────────────────────────────────────────────────
+   PALETA — PosRose
+   Base:
+     Azul acero  rgb(145, 173, 200)  →  primario / sidebar
+     Menta suave rgb(174, 214, 207)  →  acento activo / éxito
+     Crema       rgb(250, 253, 214)  →  fondo general
+   Derivados: oscurecidos / aclarados de los mismos tonos.
+   ───────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Fondos */
+  --color-bg:           #f0f2f5;              /* gris blanco — fondo principal */
+  --color-surface:      #ffffff;              /* tarjetas, modales, inputs     */
+  --color-surface-alt:  rgb(240, 246, 244);   /* menta muy desaturada          */
+
+  /* Sidebar — azul acero oscurecido */
+  --color-sidebar:      rgb(52, 82, 110);     /* azul acero oscuro             */
+  --color-sidebar-text: rgb(220, 232, 242);   /* azul acero muy claro          */
+  --color-sidebar-hover: rgba(145,173,200,0.2);
+
+  /* Activo — menta suave como highlight */
+  --color-active:       rgb(174, 214, 207);
+  --color-active-text:  rgb(30, 65, 60);      /* oscuro sobre menta            */
+
+  /* Primario — azul acero puro */
+  --color-primary:      rgb(145, 173, 200);
+  --color-primary-dark: rgb(95, 130, 163);    /* hover de botones              */
+
+  /* Texto */
+  --color-text:         rgb(28, 42, 55);      /* azul muy oscuro               */
+  --color-text-muted:   rgb(100, 128, 150);   /* subtítulos, labels            */
+
+  /* Bordes */
+  --color-border:       rgb(200, 218, 232);   /* azul acero muy suave          */
+
+  /* Estados */
+  --color-success:      rgb(174, 214, 207);   /* menta = ok                    */
+  --color-success-text: rgb(30, 80, 70);
+  --color-danger:       rgb(220, 105, 105);   /* rojo apagado — mismo tono frío */
+  --color-danger-text:  #fff;
+  --color-warning:      rgb(240, 200, 120);   /* amarillo cálido               */
+  --color-warning-text: rgb(80, 55, 10);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Google Sans Flex", system-ui, sans-serif;
+  font-optical-sizing: auto;
+  font-variation-settings: "slnt" 0, "wdth" 100, "GRAD" 0, "ROND" 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* Números, precios y métricas — Outfit */
+.num {
+  font-family: "Outfit", system-ui, sans-serif;
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 200px;
+  background: var(--color-sidebar);
+  color: var(--color-sidebar-text);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1rem;
+  gap: 1.5rem;
+  flex-shrink: 0;
+}
+
+.btn-cerrar-sesion {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--color-sidebar-text);
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: background 0.15s, opacity 0.15s;
+  text-align: left;
+}
+
+.btn-cerrar-sesion:hover {
+  background: rgba(220, 105, 105, 0.2);
+  opacity: 1;
+  color: #ffaaaa;
+}
+
+.sidebar .logo {
+  font-family: "Boldonse", system-ui;
+  font-weight: 400;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+  /* El nombre del negocio reemplaza "CrossFit" acá — a diferencia del texto
+     fijo, no hay garantía de que entre en una línea dentro del sidebar de
+     200px. Se permite envolver en vez de desbordar horizontalmente. */
+  overflow-wrap: break-word;
+  line-height: 1.2;
+}
+
+.sidebar ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  color: var(--color-sidebar-text);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: background 0.15s;
+}
+
+.nav-icon {
+  font-size: 1.25rem;
+  width: 1.25rem;
+  text-align: center;
+  flex-shrink: 0;
+  font-variation-settings: 'opsz' 20;
+  line-height: 1;
+  user-select: none;
+}
+
+.sidebar a:hover  { background: var(--color-sidebar-hover); }
+.sidebar a.active {
+  background: var(--color-active);
+  color: var(--color-active-text);
+  font-weight: 600;
+}
+
+.content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+/* ── Tipografía global ───────────────────────────────────────────────────── */
+
+h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0;
+}
+
+h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+/* ── Page header global — todos los módulos usan este patrón ─────────────── */
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}

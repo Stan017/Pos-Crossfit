@@ -1,0 +1,515 @@
+/* ── Layout ──────────────────────────────────────────────────────────────── */
+
+.inventario {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+
+.header-acciones {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.input-busqueda {
+  flex: 1;
+  max-width: 420px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.input-busqueda:focus {
+  border-color: var(--color-primary);
+}
+
+.total-label {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* ── Tabla ───────────────────────────────────────────────────────────────── */
+
+.tabla-wrapper {
+  overflow-x: auto;
+  background: var(--color-surface);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.tabla thead {
+  background: var(--color-surface-alt);
+}
+
+.tabla th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tabla td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.tabla tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tabla tbody tr:hover {
+  background: var(--color-surface-alt);
+}
+
+.td-nombre {
+  font-weight: 500;
+}
+
+.td-acciones {
+  white-space: nowrap;
+}
+
+.acciones-btns {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.th-acciones { white-space: nowrap; }
+
+/* ── Badges de stock ─────────────────────────────────────────────────────── */
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badge-ok {
+  background: var(--color-success);
+  color: var(--color-success-text);
+}
+
+.badge-warning {
+  background: var(--color-warning);
+  color: var(--color-warning-text);
+}
+
+.badge-danger {
+  background: var(--color-danger);
+  color: var(--color-danger-text);
+}
+
+/* ── Botones ─────────────────────────────────────────────────────────────── */
+
+.btn {
+  padding: 0.5rem 1.1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-text);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  color: #fff;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.btn-outline:hover {
+  background: var(--color-surface-alt);
+}
+
+.btn-danger {
+  background: var(--color-danger);
+  color: var(--color-danger-text);
+}
+
+.btn-danger:hover {
+  opacity: 0.85;
+}
+
+.btn-sm {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.82rem;
+}
+
+/* ── Estado vacío / error ────────────────────────────────────────────────── */
+
+.vacio, .cargando {
+  text-align: center;
+  padding: 3rem;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.mensaje-error {
+  background: var(--color-danger);
+  color: var(--color-danger-text);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+/* ── Modal ───────────────────────────────────────────────────────────────── */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+}
+
+.modal {
+  background: var(--color-surface);
+  border-radius: 10px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.modal-header h2 {
+  font-size: 1.1rem;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: var(--color-text);
+}
+
+/* ── Formulario ──────────────────────────────────────────────────────────── */
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: end;   /* inputs quedan a la misma altura aunque los labels varíen */
+}
+
+/* Fila de un solo elemento a ancho completo */
+.form-row-full {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.modal-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* label-text agrupa el texto y el * en una sola línea */
+.label-text {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.modal-form input,
+.modal-form select,
+.modal-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.modal-form input:focus,
+.modal-form select:focus,
+.modal-form textarea:focus {
+  border-color: var(--color-primary);
+}
+
+/* Fila para añadir categoría nueva */
+.nueva-categoria-row {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.nueva-categoria-row input {
+  flex: 1;
+  width: auto;      /* anula el width:100% heredado de .modal-form input */
+  min-width: 0;     /* permite que flex comprima el input si es necesario */
+}
+
+.btn-cat-ok,
+.btn-cat-cancel {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s;
+}
+
+.btn-cat-ok {
+  background: var(--color-success);
+  color: var(--color-success-text);
+}
+
+.btn-cat-cancel {
+  background: var(--color-danger);
+  color: var(--color-danger-text);
+}
+
+.btn-cat-ok:hover,
+.btn-cat-cancel:hover {
+  opacity: 0.8;
+}
+
+.required {
+  color: var(--color-danger);
+}
+
+.field-hint {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+  /* Mismo problema que Clientes.css: el footer es el último hijo del <form>,
+     que scrollea internamente (overflow-y:auto + flex:1) cuando el modal
+     supera max-height:88vh — sin esto, Cancelar/Guardar quedan fuera de vista. */
+  position: sticky;
+  bottom: 0;
+  background: var(--color-surface);
+}
+
+/* ── Thumbnail en tabla ──────────────────────────────────────────────────── */
+
+.th-img { width: 56px; }
+
+.td-img {
+  width: 56px;
+  padding: 4px 8px;
+}
+
+.tabla-thumbnail {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  display: block;
+}
+
+.sin-thumbnail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--color-surface-alt);
+  border-radius: 6px;
+  font-size: 1.3rem;
+}
+
+/* ── Sección de imagen en modal ─────────────────────────────────────────── */
+
+.form-imagen {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Estado: sin imagen */
+.imagen-vacia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  border: 1.5px dashed var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface-alt);
+}
+
+.imagen-vacia-icono { font-size: 1.8rem; opacity: 0.5; }
+
+.imagen-vacia-texto {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* Estado: con imagen */
+.imagen-con-preview {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.imagen-preview {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.imagen-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.input-imagen-url {
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  font-size: 0.85rem;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.input-imagen-url:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.btn-quitar-imagen {
+  background: none;
+  border: 1px solid var(--color-danger);
+  color: var(--color-danger);
+  border-radius: 5px;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+  font-family: inherit;
+  align-self: flex-start;
+}
+
+.btn-quitar-imagen:hover { opacity: 0.75; }
+
+.btn-subir-imagen {
+  background: var(--color-primary);
+  color: var(--color-text);
+  border: none;
+  border-radius: 7px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.88rem;
+  font-family: inherit;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.btn-subir-imagen:hover:not(:disabled) { background: var(--color-primary-dark); color: #fff; }
+.btn-subir-imagen:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-cambiar-imagen {
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: 6px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.btn-cambiar-imagen:hover:not(:disabled) { background: var(--color-border); }
+.btn-cambiar-imagen:disabled { opacity: 0.5; cursor: not-allowed; }

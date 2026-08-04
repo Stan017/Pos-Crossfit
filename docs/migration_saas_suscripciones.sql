@@ -1,0 +1,2 @@
+-- MOVIDO: consolidado en backend/migrations/000_schema_base.sql.
+-- Ver ese archivo para levantar una base nueva.

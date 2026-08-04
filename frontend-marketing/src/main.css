@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #f0f2f5;
+  color: #0e1d29;
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+}
+
+/* Toggle de vertical de negocio: el visitante (o el vendedor, en vivo)
+   elige "Clínica" o "Gimnasio/Estudio" y el resto de la página muestra
+   el copy correspondiente — mismo producto, mismo layout, solo cambia
+   el texto que described el negocio. */
+html[data-vertical="clinica"] .v-fitness {
+  display: none;
+}
+html[data-vertical="fitness"] .v-clinica {
+  display: none;
+}
+
+/* Toggle de ciclo de pago (mensual/semestral/anual) en la sección de precios
+   — misma mecánica que el toggle de vertical: un atributo en <html>, CSS
+   puro decide qué precio se muestra. */
+html[data-billing="mensual"] .b-semestral,
+html[data-billing="mensual"] .b-anual {
+  display: none;
+}
+html[data-billing="semestral"] .b-mensual,
+html[data-billing="semestral"] .b-anual {
+  display: none;
+}
+html[data-billing="anual"] .b-mensual,
+html[data-billing="anual"] .b-semestral {
+  display: none;
+}
+
+@layer components {
+  .glass-nav {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .card-hairline {
+    border: 1px solid rgba(52, 82, 110, 0.08);
+  }
+  .clinical-shadow {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.01), 0 2px 4px -1px rgba(0, 0, 0, 0.006);
+  }
+}
+
+/* Entrada orquestada de las 3 mini-cards del panel del hero al cargar la
+   página — un solo momento con propósito, en vez de hover-lift repartido
+   en cada card estática de la página. */
+@keyframes hero-metric-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-metric {
+  animation: hero-metric-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-metric {
+    animation: none;
+  }
+}

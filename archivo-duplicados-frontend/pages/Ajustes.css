@@ -1,0 +1,239 @@
+.ajustes {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 680px;
+}
+
+/* ── Form ─────────────────────────────────────────────────────────────────── */
+
+.ajustes-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Secciones ────────────────────────────────────────────────────────────── */
+
+.ajustes-seccion {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.4rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ajustes-seccion-titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.ajustes-icono { font-size: 1rem; }
+
+.ajustes-desc {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin-top: -0.25rem;
+}
+
+/* ── Grid de campos ───────────────────────────────────────────────────────── */
+
+.ajustes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group-full { grid-column: 1 / -1; }
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.label-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.required { color: var(--color-danger); }
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: var(--color-background, var(--color-bg));
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus { border-color: var(--color-primary); }
+
+/* ── IVA ──────────────────────────────────────────────────────────────────── */
+
+.ajustes-iva-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.iva-group { flex-shrink: 0; }
+
+.iva-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.iva-input-wrap input {
+  width: 90px;
+}
+
+.iva-pct-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.iva-presets {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  padding-bottom: 0.1rem;
+}
+
+.preset-btn {
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.preset-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+.preset-activo {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+
+.ajustes-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.ajustes-ok {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-success-text, #15803d);
+}
+
+.btn-primario {
+  padding: 0.55rem 1.4rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-primario:hover:not(:disabled) { background: var(--color-primary-dark); }
+.btn-primario:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.form-error {
+  font-size: 0.85rem;
+  color: var(--color-danger);
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: 0.5rem 0.8rem;
+}
+
+.estado-msg { font-size: 0.9rem; color: var(--color-text-muted); }
+
+/* ── Suscripción ──────────────────────────────────────────────────────────── */
+
+.sus-resumen {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+}
+
+.sus-plan { font-weight: 700; color: var(--color-text); }
+
+.sus-form { display: flex; flex-direction: column; gap: 1rem; }
+
+.sus-historial {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.sus-historial-item {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  padding: 0.3rem 0;
+}
+
+.sus-link {
+  color: var(--color-primary);
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+.sus-link:hover { text-decoration: underline; }
+
+.sus-razon {
+  font-style: italic;
+  flex-basis: 100%;
+}
+
+@media (max-width: 500px) {
+  .ajustes-grid { grid-template-columns: 1fr; }
+  .form-group-full { grid-column: 1; }
+}

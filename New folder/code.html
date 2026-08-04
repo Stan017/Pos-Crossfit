@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ClinicalSaaS | Gestión Clínica de Alta Precisión</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Hanken+Grotesk:wght@700;800&amp;family=JetBrains+Mono:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed-dim": "#c4c7ca",
+                    "on-primary-fixed-variant": "#2b4965",
+                    "background": "#f7f9ff",
+                    "on-tertiary-container": "#c0c2c5",
+                    "on-tertiary-fixed-variant": "#44474a",
+                    "on-surface": "#0e1d29",
+                    "surface-tint": "#43617e",
+                    "on-secondary-fixed": "#00201d",
+                    "tertiary-container": "#4d5053",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#a7cec8",
+                    "on-tertiary-fixed": "#191c1e",
+                    "on-tertiary": "#ffffff",
+                    "surface": "#f7f9ff",
+                    "surface-variant": "#d5e4f6",
+                    "error": "#ba1a1a",
+                    "surface-container": "#e2efff",
+                    "inverse-surface": "#24323f",
+                    "surface-container-low": "#edf4ff",
+                    "tertiary": "#36393c",
+                    "outline-variant": "#c3c7ce",
+                    "surface-dim": "#cddced",
+                    "on-primary-fixed": "#001d33",
+                    "primary-container": "#34526e",
+                    "secondary": "#406560",
+                    "on-secondary-container": "#466b66",
+                    "tertiary-fixed": "#e0e3e6",
+                    "on-error-container": "#93000a",
+                    "primary-fixed-dim": "#abcaeb",
+                    "surface-container-highest": "#d5e4f6",
+                    "on-secondary": "#ffffff",
+                    "outline": "#73777e",
+                    "inverse-on-surface": "#e8f2ff",
+                    "secondary-fixed": "#c2ebe3",
+                    "on-surface-variant": "#43474d",
+                    "inverse-primary": "#abcaeb",
+                    "on-background": "#0e1d29",
+                    "error-container": "#ffdad6",
+                    "secondary-container": "#c2ebe3",
+                    "surface-bright": "#f7f9ff",
+                    "primary-fixed": "#cee5ff",
+                    "surface-container-high": "#dbeafb",
+                    "primary": "#1b3b56",
+                    "on-primary-container": "#a6c5e6",
+                    "on-error": "#ffffff",
+                    "on-secondary-fixed-variant": "#284d48"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-md": "16px",
+                    "section-v-padding": "120px",
+                    "gutter": "24px",
+                    "margin-mobile": "20px",
+                    "container-max-width": "1280px",
+                    "stack-sm": "8px",
+                    "stack-lg": "32px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "label-sm": ["JetBrains Mono"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "headline-xl": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "display-lg-mobile": ["Hanken Grotesk"],
+                    "metric-xl": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "1.6", "letterSpacing": "0em", "fontWeight": "400"}],
+                    "label-sm": ["13px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "800"}],
+                    "headline-xl": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "0em", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "display-lg-mobile": ["44px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "metric-xl": ["56px", {"lineHeight": "1.0", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #F0F2F5;
+            color: #0e1d29;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-nav {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .card-hairline {
+            border: 1px solid rgba(52, 82, 110, 0.08);
+        }
+        .clinical-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.01), 0 2px 4px -1px rgba(0, 0, 0, 0.006);
+        }
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
+</head>
+<body class="font-body-md overflow-x-hidden">
+<!-- 1. TopNavBar -->
+<header class="fixed top-0 w-full z-50 h-[72px] bg-surface/80 glass-nav border-b border-on-surface/[0.05]">
+<div class="max-w-container-max-width mx-auto flex items-center justify-between px-gutter h-full">
+<div class="flex items-center gap-8">
+<a class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight" href="#">ClinicalSaaS</a>
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#features">Platform</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#features">Features</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#pricing">Pricing</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#about">About</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-6 py-3 rounded-xl bg-primary-container text-on-primary font-semibold hover:opacity-90 transition-opacity">
+                    Agendar demo
+                </button>
+</div>
+</div>
+</header>
+<main>
+<!-- 2. HERO SECTION -->
+<section class="pt-[160px] pb-section-v-padding px-gutter">
+<div class="max-w-container-max-width mx-auto flex flex-col items-center text-center">
+<span class="px-4 py-1.5 rounded-full bg-secondary-container/50 text-on-secondary-fixed-variant font-label-sm text-label-sm mb-stack-lg border border-secondary-container">
+                    Software de gestión clínica y deportiva
+                </span>
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-[#1C2A37] max-w-4xl mb-stack-md leading-tight">
+                    El control total de tu clínica. Sin el caos administrativo.
+                </h1>
+<p class="font-body-lg text-body-lg text-[#648096] max-w-[600px] mb-stack-lg">
+                    Simplifica la gestión de pacientes, citas y tratamientos con una interfaz de alta precisión diseñada para profesionales de la salud.
+                </p>
+<div class="flex flex-col sm:flex-row items-center gap-4 mb-[80px]">
+<button class="px-8 py-4 rounded-xl bg-primary-container text-on-primary font-bold text-body-lg hover:opacity-90 transition-opacity min-w-[200px]">
+                        Agendar demostración
+                    </button>
+<button class="px-8 py-4 rounded-xl text-primary font-bold text-body-lg hover:bg-surface-container-low transition-colors">
+                        Ver planes
+                    </button>
+</div>
+<!-- Mockup Browser -->
+<div class="w-full max-w-5xl bg-white rounded-t-[32px] card-hairline clinical-shadow overflow-hidden p-4 pb-0 bg-surface-container-low">
+<div class="flex items-center gap-2 mb-4 px-2">
+<div class="w-3 h-3 rounded-full bg-[#E8EDF2]"></div>
+<div class="w-3 h-3 rounded-full bg-[#E8EDF2]"></div>
+<div class="w-3 h-3 rounded-full bg-[#E8EDF2]"></div>
+</div>
+<div class="bg-white rounded-t-2xl overflow-hidden aspect-[16/9]">
+<img class="w-full h-full object-top object-cover" data-alt="A clean and professional B2B SaaS dashboard interface for a clinical management platform. The UI features a sidebar with navigation items like Patients, Calendar, and Finance. The main view shows a high-level analytics summary with soft blue and mint green accents, displaying patient recovery metrics and clinic revenue. The aesthetic is clinical, minimalist, and uses plenty of white space with refined typography and thin hairlines." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrELp9Fq0n-0McfH54bj6mD84xDyb7XTGosL_rFCi8Sfz1ULfb9uOongOgGF_KW-w1GNymxC7Ehh4owJJnZHqKPZeewnRHbrUFU6DyEKwghfT8h4wv19vpq-ECW8d7v3rEMIz3_N6__MWqVjtVVZs9JhEHQGcREsQ592qEpHPCjf27amQA73pLtEoF7ZRnOJ7CYUIMUpVcnzwfqhoQkxLV7FOYjo4aiiHf77uj6P9PGVnRurK4tzCC"/>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. VALOR CONCRETO (BENTO GRID) -->
+<section class="py-section-v-padding px-gutter bg-white" id="features">
+<div class="max-w-container-max-width mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Card 1 -->
+<div class="md:col-span-2 p-stack-lg rounded-[24px] bg-surface-container-low card-hairline flex flex-col justify-between h-[400px]">
+<div>
+<h3 class="font-headline-lg text-headline-lg text-primary mb-stack-sm">Agenda médica sin solapamientos</h3>
+<p class="font-body-md text-on-surface-variant max-w-md">Sincronización en tiempo real entre terapeutas y salas de tratamiento.</p>
+</div>
+<div class="mt-stack-lg bg-white rounded-xl card-hairline p-4 shadow-sm h-full overflow-hidden">
+<div class="flex gap-4 border-b border-outline-variant pb-4 mb-4">
+<div class="text-xs font-bold text-on-surface-variant">09:00 AM</div>
+<div class="flex-1 bg-primary-container/10 border-l-4 border-primary-container p-2 rounded">
+<div class="text-xs font-bold text-primary">Terapia Manual - Juan Pérez</div>
+<div class="text-[10px] text-on-surface-variant">Box 04 • Dr. García</div>
+</div>
+</div>
+<div class="flex gap-4 opacity-50">
+<div class="text-xs font-bold text-on-surface-variant">10:00 AM</div>
+<div class="flex-1 bg-secondary-container/20 border-l-4 border-secondary p-2 rounded">
+<div class="text-xs font-bold text-secondary">Evaluación Inicial - Elena M.</div>
+<div class="text-[10px] text-on-surface-variant">Box 02 • Dra. Soto</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="p-stack-lg rounded-[24px] bg-white card-hairline flex flex-col justify-between h-[400px]">
+<div>
+<h3 class="font-headline-lg text-headline-lg text-primary mb-stack-sm">Cobros y planes</h3>
+<p class="font-body-md text-on-surface-variant">Gestión automatizada de facturación.</p>
+</div>
+<div class="flex flex-col items-center justify-center flex-1">
+<span class="font-metric-xl text-metric-xl text-primary tabular-nums">$12.450</span>
+<span class="mt-2 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-fixed-variant text-label-sm font-label-sm">+18.2% este mes</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="p-stack-lg rounded-[24px] bg-white card-hairline flex flex-col justify-center h-[400px] border-l-4 border-l-secondary">
+<div class="flex items-center gap-3 mb-stack-md">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">notifications</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Alerta de Seguimiento</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-primary mb-stack-sm">Tratamiento listo para renovación</h3>
+<p class="font-body-md text-on-surface-variant">El paciente Marcos R. ha completado sus 10 sesiones de rehabilitación lumbar.</p>
+<button class="mt-stack-lg text-secondary font-bold flex items-center gap-2">
+                            Ver detalles <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<!-- Card 4 -->
+<div class="md:col-span-2 p-stack-lg rounded-[24px] bg-primary text-on-primary flex flex-col md:flex-row items-center gap-stack-lg h-[400px] overflow-hidden">
+<div class="flex-1">
+<h3 class="font-headline-lg text-headline-lg text-on-primary mb-stack-sm">Finanzas reales</h3>
+<p class="font-body-md text-on-primary-container">Analiza el rendimiento neto de cada especialista y servicio sin hojas de cálculo complejas.</p>
+</div>
+<div class="flex-1 flex items-end gap-3 h-full pt-10">
+<div class="w-full bg-on-primary-container/20 rounded-t-lg relative group h-[40%]">
+<div class="absolute bottom-0 w-full bg-secondary-container rounded-t-lg h-[100%] transition-all duration-500"></div>
+</div>
+<div class="w-full bg-on-primary-container/20 rounded-t-lg relative group h-[70%]">
+<div class="absolute bottom-0 w-full bg-secondary-container rounded-t-lg h-[100%] transition-all duration-500"></div>
+</div>
+<div class="w-full bg-on-primary-container/20 rounded-t-lg relative group h-[55%]">
+<div class="absolute bottom-0 w-full bg-secondary-container rounded-t-lg h-[100%] transition-all duration-500"></div>
+</div>
+<div class="w-full bg-on-primary-container/20 rounded-t-lg relative group h-[90%]">
+<div class="absolute bottom-0 w-full bg-secondary-container rounded-t-lg h-[100%] transition-all duration-500"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. CÓMO FUNCIONA -->
+<section class="py-section-v-padding px-gutter">
+<div class="max-w-container-max-width mx-auto">
+<div class="text-center mb-20">
+<h2 class="font-headline-xl text-headline-xl text-primary">Implementación inmediata</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Tres pasos para digitalizar tu centro hoy mismo.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-[60px]">
+<div class="relative">
+<span class="font-metric-xl text-[120px] text-primary opacity-10 absolute -top-16 -left-4 tabular-nums">01</span>
+<div class="relative z-10 pt-10">
+<h4 class="font-headline-lg text-headline-lg text-primary mb-stack-sm">Configura servicios</h4>
+<p class="font-body-md text-on-surface-variant">Añade tus especialidades, boxes de tratamiento y el horario de tus profesionales.</p>
+</div>
+</div>
+<div class="relative">
+<span class="font-metric-xl text-[120px] text-primary opacity-10 absolute -top-16 -left-4 tabular-nums">02</span>
+<div class="relative z-10 pt-10">
+<h4 class="font-headline-lg text-headline-lg text-primary mb-stack-sm">Automatiza citas</h4>
+<p class="font-body-md text-on-surface-variant">Recibe citas online y permite que el sistema gestione la facturación automáticamente.</p>
+</div>
+</div>
+<div class="relative">
+<span class="font-metric-xl text-[120px] text-primary opacity-10 absolute -top-16 -left-4 tabular-nums">03</span>
+<div class="relative z-10 pt-10">
+<h4 class="font-headline-lg text-headline-lg text-primary mb-stack-sm">Mide resultados</h4>
+<p class="font-body-md text-on-surface-variant">Accede a métricas de salud financiera y rentabilidad por cada unidad de negocio.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 5. PRICING -->
+<section class="py-section-v-padding px-gutter bg-surface-container-low" id="pricing">
+<div class="max-w-container-max-width mx-auto">
+<div class="text-center mb-16">
+<h2 class="font-headline-xl text-headline-xl text-primary">Planes diseñados para crecer</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Prueba gratuita de 14 días sin compromiso ni tarjeta de crédito.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
+<!-- Mensual -->
+<div class="bg-white p-10 rounded-[24px] card-hairline">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-4 block">Plan Base</span>
+<div class="flex items-baseline gap-1 mb-8">
+<span class="font-metric-xl text-headline-xl text-primary tabular-nums">$49</span>
+<span class="text-on-surface-variant">/mes</span>
+</div>
+<ul class="space-y-4 mb-10">
+<li class="flex items-center gap-3 font-body-md text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary/20"></span> Hasta 3 especialistas
+                            </li>
+<li class="flex items-center gap-3 font-body-md text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary/20"></span> Agenda inteligente
+                            </li>
+<li class="flex items-center gap-3 font-body-md text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary/20"></span> Facturación básica
+                            </li>
+</ul>
+<button class="w-full py-4 rounded-xl border border-primary-container text-primary-container font-bold hover:bg-primary-container/5 transition-colors">
+                            Comenzar ahora
+                        </button>
+</div>
+<!-- Trimestral (Destacado) -->
+<div class="bg-white p-12 rounded-[24px] card-hairline border-2 border-primary-container shadow-xl relative z-10 scale-105">
+<div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1 bg-primary-container text-white text-[12px] font-bold rounded-full uppercase tracking-widest">
+                            Más Popular
+                        </div>
+<span class="font-label-sm text-label-sm text-primary uppercase mb-4 block">Crecimiento</span>
+<div class="flex items-baseline gap-1 mb-8">
+<span class="font-metric-xl text-headline-xl text-primary tabular-nums">$129</span>
+<span class="text-on-surface-variant">/trimestre</span>
+</div>
+<ul class="space-y-4 mb-10">
+<li class="flex items-center gap-3 font-body-md text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Especialistas ilimitados
+                            </li>
+<li class="flex items-center gap-3 font-body-md text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Panel financiero avanzado
+                            </li>
+<li class="flex items-center gap-3 font-body-md text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Recordatorios por WhatsApp
+                            </li>
+<li class="flex items-center gap-3 font-body-md text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Firma de consentimientos
+                            </li>
+</ul>
+<button class="w-full py-4 rounded-xl bg-primary-container text-on-primary font-bold hover:opacity-90 transition-opacity">
+                            Seleccionar Plan
+                        </button>
+</div>
+<!-- Anual -->
+<div class="bg-white p-10 rounded-[24px] card-hairline">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-4 block">Premium</span>
+<div class="flex items-baseline gap-1 mb-8">
+<span class="font-metric-xl text-headline-xl text-primary tabular-nums">$399</span>
+<span class="text-on-surface-variant">/año</span>
+</div>
+<ul class="space-y-4 mb-10">
+<li class="flex items-center gap-3 font-body-md text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary/20"></span> Todo en Crecimiento
+                            </li>
+<li class="flex items-center gap-3 font-body-md text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary/20"></span> Gestión multi-clínica
+                            </li>
+<li class="flex items-center gap-3 font-body-md text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary/20"></span> API para integraciones
+                            </li>
+</ul>
+<button class="w-full py-4 rounded-xl border border-primary-container text-primary-container font-bold hover:bg-primary-container/5 transition-colors">
+                            Comenzar ahora
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA FINAL -->
+<section class="py-section-v-padding px-gutter">
+<div class="max-w-container-max-width mx-auto bg-primary rounded-[40px] p-16 text-center text-on-primary overflow-hidden relative">
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+<!-- Subtle grid pattern -->
+<div class="absolute inset-0" style="background-image: radial-gradient(circle, white 1px, transparent 1px); background-size: 40px 40px;"></div>
+</div>
+<div class="relative z-10">
+<h2 class="font-display-lg text-headline-xl md:text-display-lg mb-stack-md">Lleva tu clínica al siguiente nivel</h2>
+<p class="font-body-lg text-on-primary-container max-w-2xl mx-auto mb-stack-lg">
+                        Únete a más de 500 centros de rehabilitación que ya optimizan su gestión con ClinicalSaaS.
+                    </p>
+<div class="flex flex-col sm:flex-row justify-center gap-4">
+<button class="px-10 py-5 rounded-xl bg-white text-primary font-bold text-body-lg hover:bg-surface-container-low transition-colors">
+                            Empezar prueba gratuita
+                        </button>
+<button class="px-10 py-5 rounded-xl border border-on-primary-container text-on-primary font-bold text-body-lg hover:bg-white/5 transition-colors">
+                            Contactar con ventas
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="bg-background border-t border-on-surface/[0.08] py-section-v-padding px-gutter">
+<div class="max-w-container-max-width mx-auto">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-20">
+<div class="col-span-2 md:col-span-1">
+<h4 class="font-headline-lg text-primary font-bold mb-stack-md tracking-tight">ClinicalSaaS</h4>
+<p class="font-body-md text-on-surface-variant max-w-xs">Built for medical-grade precision in rehabilitation management.</p>
+</div>
+<div>
+<h5 class="font-label-sm text-primary font-bold uppercase mb-stack-md">Producto</h5>
+<nav class="flex flex-col gap-3">
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Features</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Pricing</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Docs</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Integraciones</a>
+</nav>
+</div>
+<div>
+<h5 class="font-label-sm text-primary font-bold uppercase mb-stack-md">Compañía</h5>
+<nav class="flex flex-col gap-3">
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">About</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Careers</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Press</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Legal</a>
+</nav>
+</div>
+<div>
+<h5 class="font-label-sm text-primary font-bold uppercase mb-stack-md">Soporte</h5>
+<nav class="flex flex-col gap-3">
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Help Center</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Contact</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">API Status</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Seguridad</a>
+</nav>
+</div>
+</div>
+<div class="flex flex-col md:flex-row justify-between items-center pt-gutter border-t border-on-surface/[0.08] gap-4">
+<p class="font-body-md text-on-surface-variant text-[14px]">
+                    © 2024 ClinicalSaaS. Built for medical-grade precision.
+                </p>
+<div class="flex gap-6">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-[14px]" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-[14px]" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-[14px]" href="#">Cookie Policy</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+        // Simple micro-interactions for the cards
+        document.querySelectorAll('.card-hairline').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+                card.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body></html>

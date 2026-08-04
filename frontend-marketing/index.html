@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html class="light" lang="es" data-vertical="clinica" data-billing="mensual">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DarkCross | Gestión de Alta Precisión para tu Negocio</title>
+<link href="https://fonts.googleapis.com/css2?family=Boldonse&family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=Outfit:wght@100..900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/src/main.css"/>
+</head>
+<body class="font-body-md overflow-x-hidden">
+<!-- 1. TopNavBar -->
+<header class="fixed top-0 w-full z-50 h-[72px] bg-surface/80 glass-nav border-b border-on-surface/[0.05]">
+<div class="max-w-container-max-width mx-auto flex items-center justify-between px-gutter h-full">
+<div class="flex items-center gap-8">
+<a class="font-wordmark text-xl text-primary tracking-tight" href="#">DarkCross</a>
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#features">Features</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#pricing">Pricing</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#about">About</a>
+</nav>
+</div>
+<div class="flex items-center gap-2 sm:gap-4">
+<div class="relative" data-vmenu>
+<button type="button" data-vmenu-trigger aria-haspopup="menu" aria-expanded="false" class="px-4 sm:px-6 py-3 rounded-xl text-primary font-semibold hover:bg-surface-container-low transition-colors">
+Iniciar sesión
+</button>
+<div data-vmenu-panel class="hidden absolute right-0 top-full mt-2 w-56 rounded-2xl bg-white card-hairline shadow-lg overflow-hidden z-50 text-left">
+<a data-app="clinica" href="#" class="block px-5 py-3 font-body-md text-on-surface hover:bg-surface-container-low transition-colors">Clínica o rehabilitación</a>
+<a data-app="fitness" href="#" class="block px-5 py-3 font-body-md text-on-surface hover:bg-surface-container-low transition-colors border-t border-outline-variant">Gimnasio o estudio</a>
+</div>
+</div>
+<div class="relative" data-vmenu>
+<button type="button" data-vmenu-trigger aria-haspopup="menu" aria-expanded="false" class="px-4 sm:px-6 py-3 rounded-xl bg-primary-container text-on-primary font-semibold hover:opacity-90 transition-opacity">
+Registrarse
+</button>
+<div data-vmenu-panel class="hidden absolute right-0 top-full mt-2 w-56 rounded-2xl bg-white card-hairline shadow-lg overflow-hidden z-50 text-left">
+<a data-app="clinica" data-registro href="#" class="block px-5 py-3 font-body-md text-on-surface hover:bg-surface-container-low transition-colors">Clínica o rehabilitación</a>
+<a data-app="fitness" data-registro href="#" class="block px-5 py-3 font-body-md text-on-surface hover:bg-surface-container-low transition-colors border-t border-outline-variant">Gimnasio o estudio</a>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main>
+<!-- 2. HERO SECTION -->
+<section class="pt-[160px] pb-section-v-padding px-gutter">
+<div class="max-w-container-max-width mx-auto flex flex-col items-center text-center">
+<div class="inline-flex items-center gap-1 p-1 rounded-full bg-surface-container-low border border-on-surface/[0.06] mb-stack-lg" role="group" aria-label="Tipo de negocio">
+<button type="button" data-vertical-btn="clinica" aria-pressed="true" class="px-5 py-2 rounded-full font-label-sm text-label-sm font-semibold transition-colors bg-primary-container text-on-primary">
+Clínica o rehabilitación
+</button>
+<button type="button" data-vertical-btn="fitness" aria-pressed="false" class="px-5 py-2 rounded-full font-label-sm text-label-sm font-semibold transition-colors text-on-surface-variant hover:text-primary">
+Gimnasio o estudio
+</button>
+</div>
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface max-w-4xl mb-stack-md leading-tight">
+<span class="v-clinica">El control total de tu clínica. Sin el caos administrativo.</span>
+<span class="v-fitness">El control total de tu box. Sin el caos administrativo.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[600px] mb-stack-lg">
+<span class="v-clinica">Simplifica la gestión de pacientes, citas y tratamientos con una interfaz de alta precisión diseñada para profesionales de la salud.</span>
+<span class="v-fitness">Simplifica la gestión de miembros, clases y membresías con una interfaz de alta precisión diseñada para tu equipo de coaches.</span>
+</p>
+<div class="flex flex-col sm:flex-row items-center gap-4 mb-[80px]">
+<div class="relative" data-vmenu>
+<button type="button" data-vmenu-trigger aria-haspopup="menu" aria-expanded="false" class="px-8 py-4 rounded-xl bg-primary-container text-on-primary font-bold text-body-lg hover:opacity-90 transition-opacity min-w-[200px]">
+Registrarse
+</button>
+<div data-vmenu-panel class="hidden absolute left-0 top-full mt-2 w-56 rounded-2xl bg-white card-hairline shadow-lg overflow-hidden z-50 text-left">
+<a data-app="clinica" data-registro href="#" class="block px-5 py-3 font-body-md text-on-surface hover:bg-surface-container-low transition-colors">Clínica o rehabilitación</a>
+<a data-app="fitness" data-registro href="#" class="block px-5 py-3 font-body-md text-on-surface hover:bg-surface-container-low transition-colors border-t border-outline-variant">Gimnasio o estudio</a>
+</div>
+</div>
+<a href="#pricing" class="px-8 py-4 rounded-xl text-primary font-bold text-body-lg hover:bg-surface-container-low transition-colors text-center">
+Ver planes
+</a>
+</div>
+<!-- Panel de producto real — sin bezel de dispositivo, sin foto de stock.
+     Reusa el mismo lenguaje visual (card-hairline, tokens de tipografía)
+     que el resto de la página, en vez de una foto genérica de monitor. -->
+<div class="w-full max-w-5xl bg-surface-container-low rounded-3xl card-hairline clinical-shadow overflow-hidden p-6 md:p-8 text-left">
+<div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-1">Panel de hoy</p>
+<p class="font-headline-lg text-headline-lg text-primary">
+<span class="v-clinica">Bienvenida, Dra. Ana Torres</span>
+<span class="v-fitness">Bienvenido, Coach Andrés Ruiz</span>
+</p>
+</div>
+<div class="flex items-center gap-2 px-4 py-2 rounded-full bg-secondary-container text-on-secondary-fixed-variant font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="v-clinica">6 citas hoy</span>
+<span class="v-fitness">6 clases hoy</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="bg-white rounded-2xl card-hairline p-5 flex flex-col hero-metric" style="animation-delay: 0ms">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Ingresos del mes</span>
+<span class="font-metric-xl text-[32px] text-primary tabular-nums mt-2">$12.450</span>
+<span class="mt-1 font-label-sm text-label-sm text-secondary">+18.2% vs. mes anterior</span>
+</div>
+<div class="bg-white rounded-2xl card-hairline p-5 flex flex-col hero-metric" style="animation-delay: 90ms">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">
+<span class="v-clinica">Pacientes activos</span>
+<span class="v-fitness">Miembros activos</span>
+</span>
+<span class="font-metric-xl text-[32px] text-primary tabular-nums mt-2">184</span>
+<span class="mt-1 font-label-sm text-label-sm text-on-surface-variant">12 nuevos esta semana</span>
+</div>
+<div class="bg-white rounded-2xl card-hairline p-5 hero-metric" style="animation-delay: 180ms">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-3">
+<span class="v-clinica">Próxima cita</span>
+<span class="v-fitness">Próxima clase</span>
+</span>
+<div class="border-l-4 border-primary-container pl-3">
+<p class="font-body-md font-bold text-primary text-sm">
+<span class="v-clinica">Terapia Manual — Juan Pérez</span>
+<span class="v-fitness">WOD — Juan Pérez</span>
+</p>
+<p class="text-[11px] text-on-surface-variant">
+<span class="v-clinica">09:00 AM · Box 04 · Dra. Torres</span>
+<span class="v-fitness">06:00 AM · Sala 1 · Coach Ruiz</span>
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. VALOR CONCRETO (BENTO GRID) -->
+<section class="py-section-v-padding px-gutter bg-white" id="features">
+<div class="max-w-container-max-width mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Card 1 -->
+<div class="md:col-span-2 p-stack-lg rounded-3xl bg-surface-container-low card-hairline flex flex-col justify-between h-[400px]">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-stack-sm">
+<span class="v-clinica">Agenda médica sin solapamientos</span>
+<span class="v-fitness">Horarios sin solapamientos</span>
+</h2>
+<p class="font-body-md text-on-surface-variant max-w-md">
+<span class="v-clinica">Sincronización en tiempo real entre terapeutas y salas de tratamiento.</span>
+<span class="v-fitness">Sincronización en tiempo real entre coaches y salas de entrenamiento.</span>
+</p>
+</div>
+<div class="mt-stack-lg bg-white rounded-xl card-hairline p-4 shadow-sm h-full overflow-hidden">
+<div class="flex gap-4 border-b border-outline-variant pb-4 mb-4">
+<div class="text-xs font-bold text-on-surface-variant">
+<span class="v-clinica">09:00 AM</span>
+<span class="v-fitness">06:00 AM</span>
+</div>
+<div class="flex-1 bg-primary-container/10 border-l-4 border-primary-container p-2 rounded">
+<div class="text-xs font-bold text-primary">
+<span class="v-clinica">Terapia Manual - Juan Pérez</span>
+<span class="v-fitness">WOD - Juan Pérez</span>
+</div>
+<div class="text-[10px] text-on-surface-variant">
+<span class="v-clinica">Box 04 • Dr. García</span>
+<span class="v-fitness">Sala 1 • Coach García</span>
+</div>
+</div>
+</div>
+<div class="flex gap-4 opacity-50">
+<div class="text-xs font-bold text-on-surface-variant">
+<span class="v-clinica">10:00 AM</span>
+<span class="v-fitness">07:00 AM</span>
+</div>
+<div class="flex-1 bg-secondary-container/20 border-l-4 border-secondary p-2 rounded">
+<div class="text-xs font-bold text-secondary">
+<span class="v-clinica">Evaluación Inicial - Elena M.</span>
+<span class="v-fitness">Clase de Pilates - Elena M.</span>
+</div>
+<div class="text-[10px] text-on-surface-variant">
+<span class="v-clinica">Box 02 • Dra. Soto</span>
+<span class="v-fitness">Sala 2 • Coach Soto</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="p-stack-lg rounded-3xl bg-white card-hairline flex flex-col justify-between h-[400px]">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-stack-sm">
+<span class="v-clinica">Historial médico centralizado</span>
+<span class="v-fitness">Membresías y asistencia centralizadas</span>
+</h2>
+<p class="font-body-md text-on-surface-variant">
+<span class="v-clinica">Patologías, lesiones y evolución en un solo lugar.</span>
+<span class="v-fitness">Estado de plan, clases restantes y check-in en un solo lugar.</span>
+</p>
+</div>
+<div class="flex flex-col gap-2.5 flex-1 justify-center">
+<span class="v-clinica px-3 py-1.5 rounded-full bg-secondary-container text-on-secondary-fixed-variant text-label-sm font-label-sm w-fit">Patología activa</span>
+<span class="v-clinica px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm w-fit">Lesión previa</span>
+<span class="v-clinica px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm w-fit">Operación previa</span>
+<span class="v-fitness px-3 py-1.5 rounded-full bg-secondary-container text-on-secondary-fixed-variant text-label-sm font-label-sm w-fit">Membresía activa</span>
+<span class="v-fitness px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm w-fit">Clases restantes: 6</span>
+<span class="v-fitness px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm w-fit">Check-in de hoy</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="p-stack-lg rounded-3xl bg-white card-hairline flex flex-col justify-center h-[400px] border-l-4 border-l-warning">
+<div class="flex items-center gap-3 mb-stack-md">
+<div class="w-10 h-10 rounded-full bg-warning flex items-center justify-center text-warning-text">
+<span class="material-symbols-outlined">notifications</span>
+</div>
+<!-- Mismo semáforo real del motor de alertas: 3-7 días = amarillo,
+     0-2 días = rojo, vencida = gris. Esta card muestra el caso amarillo. -->
+<span class="font-label-sm text-label-sm text-warning-text uppercase tracking-widest">Alerta de Seguimiento · 3 días</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-stack-sm">
+<span class="v-clinica">Tratamiento listo para renovación</span>
+<span class="v-fitness">Membresía por vencer</span>
+</h2>
+<p class="font-body-md text-on-surface-variant">
+<span class="v-clinica">El paciente Marcos R. ha completado sus 10 sesiones de rehabilitación lumbar.</span>
+<span class="v-fitness">El miembro Marcos R. tiene su plan mensual vencido en 3 días.</span>
+</p>
+<span class="mt-stack-lg text-secondary font-bold flex items-center gap-2">
+Ver detalles <span class="material-symbols-outlined">arrow_forward</span>
+</span>
+</div>
+<!-- Card 4 -->
+<div class="md:col-span-2 p-stack-lg rounded-3xl bg-primary text-on-primary flex flex-col md:flex-row items-center gap-stack-lg h-[400px] overflow-hidden">
+<div class="flex-1">
+<h2 class="font-headline-lg text-headline-lg text-on-primary mb-stack-sm">Finanzas reales</h2>
+<p class="font-body-md text-on-primary-container">
+<span class="v-clinica">Analiza el rendimiento neto de cada especialista y servicio sin hojas de cálculo complejas.</span>
+<span class="v-fitness">Analiza el rendimiento neto de cada coach y producto sin hojas de cálculo complejas.</span>
+</p>
+</div>
+<div class="flex-1 flex items-end gap-3 h-full pt-10">
+<div class="w-full bg-on-primary-container/20 rounded-t-lg relative group h-[40%]">
+<div class="absolute bottom-0 w-full bg-secondary-container rounded-t-lg h-[100%] transition-all duration-500"></div>
+</div>
+<div class="w-full bg-on-primary-container/20 rounded-t-lg relative group h-[70%]">
+<div class="absolute bottom-0 w-full bg-secondary-container rounded-t-lg h-[100%] transition-all duration-500"></div>
+</div>
+<div class="w-full bg-on-primary-container/20 rounded-t-lg relative group h-[55%]">
+<div class="absolute bottom-0 w-full bg-secondary-container rounded-t-lg h-[100%] transition-all duration-500"></div>
+</div>
+<div class="w-full bg-on-primary-container/20 rounded-t-lg relative group h-[90%]">
+<div class="absolute bottom-0 w-full bg-secondary-container rounded-t-lg h-[100%] transition-all duration-500"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. CÓMO FUNCIONA -->
+<section class="py-section-v-padding px-gutter">
+<div class="max-w-container-max-width mx-auto">
+<div class="text-center mb-20">
+<h2 class="font-headline-xl text-headline-xl text-primary">Implementación inmediata</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Tres pasos para digitalizar tu centro hoy mismo.</p>
+</div>
+<!-- Badge circular + línea conectora en vez de números gigantes translúcidos.
+     La línea se ancla al propio círculo (left = su centro, width = ancho de
+     columna + gap) en vez de un overlay por porcentaje del grid completo —
+     con gap-[60px] fijo en px, un cálculo por % no coincide con el centro
+     real de cada columna y la línea queda descuadrada del primer círculo. -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-[60px]">
+<div class="relative">
+<div class="hidden md:block absolute top-[22px] left-[22px] h-px bg-outline-variant w-[calc(100%+60px)]" aria-hidden="true"></div>
+<div class="relative z-10 w-11 h-11 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-metric-xl text-label-sm tabular-nums mb-stack-md">01</div>
+<h3 class="font-headline-lg text-headline-lg text-primary mb-stack-sm">
+<span class="v-clinica">Configura servicios</span>
+<span class="v-fitness">Configura planes y clases</span>
+</h3>
+<p class="font-body-md text-on-surface-variant">
+<span class="v-clinica">Añade tus especialidades, boxes de tratamiento y el horario de tus profesionales.</span>
+<span class="v-fitness">Añade tus planes, clases y el horario de tus coaches.</span>
+</p>
+</div>
+<div class="relative">
+<div class="hidden md:block absolute top-[22px] left-[22px] h-px bg-outline-variant w-[calc(100%+60px)]" aria-hidden="true"></div>
+<div class="relative z-10 w-11 h-11 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-metric-xl text-label-sm tabular-nums mb-stack-md">02</div>
+<h3 class="font-headline-lg text-headline-lg text-primary mb-stack-sm">
+<span class="v-clinica">Automatiza citas</span>
+<span class="v-fitness">Automatiza reservas</span>
+</h3>
+<p class="font-body-md text-on-surface-variant">
+<span class="v-clinica">Recibe citas online y permite que el sistema gestione la facturación automáticamente.</span>
+<span class="v-fitness">Recibe reservas online y permite que el sistema gestione los cobros automáticamente.</span>
+</p>
+</div>
+<div class="relative">
+<div class="relative z-10 w-11 h-11 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-metric-xl text-label-sm tabular-nums mb-stack-md">03</div>
+<h3 class="font-headline-lg text-headline-lg text-primary mb-stack-sm">Mide resultados</h3>
+<p class="font-body-md text-on-surface-variant">Accede a métricas de salud financiera y rentabilidad por cada unidad de negocio.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- 5. PRICING -->
+<section class="py-section-v-padding px-gutter bg-surface-container-low" id="pricing">
+<div class="max-w-container-max-width mx-auto">
+<div class="text-center mb-10">
+<h2 class="font-headline-xl text-headline-xl text-primary">Un plan simple, o uno a tu medida</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Sin niveles confusos ni funciones escondidas detrás de un plan superior.</p>
+</div>
+<div class="flex justify-center mb-12">
+<div class="inline-flex items-center gap-1 p-1 rounded-full bg-white card-hairline" role="group" aria-label="Ciclo de pago">
+<button type="button" data-billing-btn="mensual" aria-pressed="true" class="px-5 py-2 rounded-full font-label-sm text-label-sm font-semibold transition-colors bg-primary-container text-on-primary">Mensual</button>
+<button type="button" data-billing-btn="semestral" aria-pressed="false" class="px-5 py-2 rounded-full font-label-sm text-label-sm font-semibold transition-colors text-on-surface-variant hover:text-primary">Semestral</button>
+<button type="button" data-billing-btn="anual" aria-pressed="false" class="px-5 py-2 rounded-full font-label-sm text-label-sm font-semibold transition-colors text-on-surface-variant hover:text-primary">Anual</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-6xl mx-auto items-stretch">
+<!-- Solo -->
+<div class="bg-white p-10 rounded-3xl card-hairline flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-4 block">Solo</span>
+<div class="mb-1">
+<span class="b-mensual"><span class="font-metric-xl text-headline-xl text-primary tabular-nums">$20</span><span class="text-on-surface-variant">/mes</span></span>
+<span class="b-semestral"><span class="font-metric-xl text-headline-xl text-primary tabular-nums">$100</span><span class="text-on-surface-variant">/semestre</span></span>
+<span class="b-anual"><span class="font-metric-xl text-headline-xl text-primary tabular-nums">$200</span><span class="text-on-surface-variant">/año</span></span>
+</div>
+<p class="font-label-sm text-label-sm text-secondary mb-8 h-4">
+<span class="b-semestral">Equivale a 1 mes gratis</span>
+<span class="b-anual">Equivale a 2 meses gratis</span>
+</p>
+<p class="font-body-md text-on-surface-variant mb-6">
+<span class="v-clinica">1 médico y 1 asistente.</span>
+<span class="v-fitness">1 coach y 1 asistente.</span>
+</p>
+<ul class="space-y-4 mb-10 flex-1">
+<li class="flex items-center gap-3 font-body-md text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="v-clinica">Agenda y reservas de citas</span>
+<span class="v-fitness">Agenda y reservas de clases</span>
+</li>
+<li class="flex items-center gap-3 font-body-md text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="v-clinica">Pacientes e historial médico</span>
+<span class="v-fitness">Miembros e historial de asistencia</span>
+</li>
+<li class="flex items-center gap-3 font-body-md text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Cobros y facturación
+</li>
+</ul>
+<div class="relative w-full" data-vmenu>
+<button type="button" data-vmenu-trigger aria-haspopup="menu" aria-expanded="false" class="w-full py-4 rounded-xl border border-primary-container text-primary-container font-bold hover:bg-primary-container/5 transition-colors">
+Registrarse
+</button>
+<div data-vmenu-panel class="hidden absolute left-0 top-full mt-2 w-full rounded-2xl bg-white card-hairline shadow-lg overflow-hidden z-50 text-left">
+<a data-app="clinica" data-registro href="#" class="block px-5 py-3 font-body-md text-on-surface hover:bg-surface-container-low transition-colors">Clínica o rehabilitación</a>
+<a data-app="fitness" data-registro href="#" class="block px-5 py-3 font-body-md text-on-surface hover:bg-surface-container-low transition-colors border-t border-outline-variant">Gimnasio o estudio</a>
+</div>
+</div>
+</div>
+<!-- Estándar -->
+<div class="bg-white p-10 rounded-3xl card-hairline border-2 border-primary-container flex flex-col">
+<span class="font-label-sm text-label-sm text-primary uppercase mb-4 block">Estándar</span>
+<div class="mb-1">
+<span class="b-mensual"><span class="font-metric-xl text-headline-xl text-primary tabular-nums">$44</span><span class="text-on-surface-variant">/mes</span></span>
+<span class="b-semestral"><span class="font-metric-xl text-headline-xl text-primary tabular-nums">$220</span><span class="text-on-surface-variant">/semestre</span></span>
+<span class="b-anual"><span class="font-metric-xl text-headline-xl text-primary tabular-nums">$440</span><span class="text-on-surface-variant">/año</span></span>
+</div>
+<p class="font-label-sm text-label-sm text-secondary mb-8 h-4">
+<span class="b-semestral">Equivale a 1 mes gratis</span>
+<span class="b-anual">Equivale a 2 meses gratis</span>
+</p>
+<p class="font-body-md text-on-surface-variant mb-6">
+<span class="v-clinica">Hasta 3 médicos y 2 asistentes.</span>
+<span class="v-fitness">Hasta 3 coaches y 2 asistentes.</span>
+</p>
+<ul class="space-y-4 mb-10 flex-1">
+<li class="flex items-center gap-3 font-body-md text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="v-clinica">Agenda y reservas de citas</span>
+<span class="v-fitness">Agenda y reservas de clases</span>
+</li>
+<li class="flex items-center gap-3 font-body-md text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="v-clinica">Pacientes e historial médico</span>
+<span class="v-fitness">Miembros e historial de asistencia</span>
+</li>
+<li class="flex items-center gap-3 font-body-md text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Cobros y facturación
+</li>
+<li class="flex items-center gap-3 font-body-md text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Alertas de seguimiento
+</li>
+</ul>
+<div class="relative w-full" data-vmenu>
+<button type="button" data-vmenu-trigger aria-haspopup="menu" aria-expanded="false" class="w-full py-4 rounded-xl bg-primary-container text-on-primary font-bold hover:opacity-90 transition-opacity">
+Registrarse
+</button>
+<div data-vmenu-panel class="hidden absolute left-0 top-full mt-2 w-full rounded-2xl bg-white card-hairline shadow-lg overflow-hidden z-50 text-left">
+<a data-app="clinica" data-registro href="#" class="block px-5 py-3 font-body-md text-on-surface hover:bg-surface-container-low transition-colors">Clínica o rehabilitación</a>
+<a data-app="fitness" data-registro href="#" class="block px-5 py-3 font-body-md text-on-surface hover:bg-surface-container-low transition-colors border-t border-outline-variant">Gimnasio o estudio</a>
+</div>
+</div>
+</div>
+<!-- Clínica -->
+<div class="bg-white p-10 rounded-3xl card-hairline flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-4 block">Clínica</span>
+<div class="mb-1">
+<span class="b-mensual"><span class="font-metric-xl text-headline-xl text-primary tabular-nums">$90</span><span class="text-on-surface-variant">/mes</span></span>
+<span class="b-semestral"><span class="font-metric-xl text-headline-xl text-primary tabular-nums">$450</span><span class="text-on-surface-variant">/semestre</span></span>
+<span class="b-anual"><span class="font-metric-xl text-headline-xl text-primary tabular-nums">$900</span><span class="text-on-surface-variant">/año</span></span>
+</div>
+<p class="font-label-sm text-label-sm text-secondary mb-8 h-4">
+<span class="b-semestral">Equivale a 1 mes gratis</span>
+<span class="b-anual">Equivale a 2 meses gratis</span>
+</p>
+<p class="font-body-md text-on-surface-variant mb-6">
+<span class="v-clinica">Hasta 6 médicos y 3 asistentes.</span>
+<span class="v-fitness">Hasta 6 coaches y 3 asistentes.</span>
+</p>
+<ul class="space-y-4 mb-10 flex-1">
+<li class="flex items-center gap-3 font-body-md text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Todo lo del plan Estándar
+</li>
+<li class="flex items-center gap-3 font-body-md text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Más capacidad de staff
+</li>
+</ul>
+<div class="relative w-full" data-vmenu>
+<button type="button" data-vmenu-trigger aria-haspopup="menu" aria-expanded="false" class="w-full py-4 rounded-xl border border-primary-container text-primary-container font-bold hover:bg-primary-container/5 transition-colors">
+Registrarse
+</button>
+<div data-vmenu-panel class="hidden absolute left-0 top-full mt-2 w-full rounded-2xl bg-white card-hairline shadow-lg overflow-hidden z-50 text-left">
+<a data-app="clinica" data-registro href="#" class="block px-5 py-3 font-body-md text-on-surface hover:bg-surface-container-low transition-colors">Clínica o rehabilitación</a>
+<a data-app="fitness" data-registro href="#" class="block px-5 py-3 font-body-md text-on-surface hover:bg-surface-container-low transition-colors border-t border-outline-variant">Gimnasio o estudio</a>
+</div>
+</div>
+</div>
+<!-- Personalizado -->
+<div class="bg-white p-10 rounded-3xl card-hairline flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-4 block">Personalizado</span>
+<div class="flex items-baseline gap-1 mb-8">
+<span class="font-metric-xl text-headline-xl text-primary">A medida</span>
+</div>
+<ul class="space-y-4 mb-10 flex-1">
+<li class="flex items-center gap-3 font-body-md text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary/20"></span> Todo lo del plan Clínica
+</li>
+<li class="flex items-center gap-3 font-body-md text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary/20"></span> Múltiples sedes o especialidades
+</li>
+<li class="flex items-center gap-3 font-body-md text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary/20"></span> Integraciones a medida
+</li>
+<li class="flex items-center gap-3 font-body-md text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary/20"></span> Soporte dedicado
+</li>
+</ul>
+<a href="mailto:infodarkcross@gmail.com?subject=Consulta%20sobre%20plan%20Personalizado" class="w-full py-4 rounded-xl border border-primary-container text-primary-container font-bold hover:bg-primary-container/5 transition-colors text-center block">
+Contactar con ventas
+</a>
+</div>
+</div>
+</div>
+</section>
+<section class="py-section-v-padding px-gutter bg-white" id="about">
+<div class="max-w-container-max-width mx-auto text-center">
+<h2 class="font-headline-xl text-headline-xl text-primary mb-stack-sm">Por qué DarkCross</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-stack-md">
+<span class="v-clinica">Las clínicas de rehabilitación</span><span class="v-fitness">Los boxes y estudios</span> suelen operar entre hojas de cálculo, WhatsApp y cuadernos — no por falta de gente capaz, sino porque el software que existe es genérico, caro o pensado para otro tipo de negocio.
+</p>
+<p class="font-body-md text-on-surface-variant max-w-2xl mx-auto">
+DarkCross nace para resolver justamente eso: un sistema construido específicamente para <span class="v-clinica">clínicas de rehabilitación</span><span class="v-fitness">boxes de CrossFit y estudios</span>, con precios simples y accesibles, sin letras chiquitas ni funciones escondidas detrás de un plan superior, y soporte directo en español.
+</p>
+</div>
+</section>
+<!-- CTA FINAL -->
+<section class="py-section-v-padding px-gutter">
+<div class="max-w-container-max-width mx-auto bg-primary rounded-3xl p-16 text-center text-on-primary">
+<h2 class="font-display-lg text-headline-xl md:text-display-lg mb-stack-md">
+<span class="v-clinica">Lleva tu clínica al siguiente nivel</span>
+<span class="v-fitness">Lleva tu box al siguiente nivel</span>
+</h2>
+<p class="font-body-lg text-on-primary-container max-w-2xl mx-auto mb-stack-lg">
+Sé de los primeros en gestionar tu operación con DarkCross.
+</p>
+<div class="flex flex-col sm:flex-row justify-center gap-4">
+<div class="relative" data-vmenu>
+<button type="button" data-vmenu-trigger aria-haspopup="menu" aria-expanded="false" class="w-full px-10 py-5 rounded-xl bg-white text-primary font-bold text-body-lg hover:bg-surface-container-low transition-colors">
+Registrarse
+</button>
+<div data-vmenu-panel class="hidden absolute left-0 top-full mt-2 w-56 rounded-2xl bg-white card-hairline shadow-lg overflow-hidden z-50 text-left">
+<a data-app="clinica" data-registro href="#" class="block px-5 py-3 font-body-md text-on-surface hover:bg-surface-container-low transition-colors">Clínica o rehabilitación</a>
+<a data-app="fitness" data-registro href="#" class="block px-5 py-3 font-body-md text-on-surface hover:bg-surface-container-low transition-colors border-t border-outline-variant">Gimnasio o estudio</a>
+</div>
+</div>
+<a href="mailto:infodarkcross@gmail.com?subject=Consulta%20sobre%20DarkCross" class="px-10 py-5 rounded-xl border border-on-primary-container text-on-primary font-bold text-body-lg hover:bg-white/5 transition-colors inline-block">
+Contactar con ventas
+</a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="bg-background border-t border-on-surface/[0.08] py-section-v-padding px-gutter">
+<div class="max-w-container-max-width mx-auto">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-20">
+<div class="col-span-2 md:col-span-1">
+<h3 class="font-wordmark text-lg text-primary mb-stack-md tracking-tight">DarkCross</h3>
+<p class="font-body-md text-on-surface-variant max-w-xs">Un solo sistema, adaptado a tu tipo de negocio.</p>
+</div>
+<div>
+<h4 class="font-label-sm text-primary font-bold uppercase mb-stack-md">Producto</h4>
+<nav class="flex flex-col gap-3">
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#features">Features</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#pricing">Pricing</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="proximamente.html?de=Docs">Docs</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="proximamente.html?de=Integraciones">Integraciones</a>
+</nav>
+</div>
+<div>
+<h4 class="font-label-sm text-primary font-bold uppercase mb-stack-md">Compañía</h4>
+<nav class="flex flex-col gap-3">
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="#about">About</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="proximamente.html?de=Careers">Careers</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="proximamente.html?de=Press">Press</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="proximamente.html?de=Legal">Legal</a>
+</nav>
+</div>
+<div>
+<h4 class="font-label-sm text-primary font-bold uppercase mb-stack-md">Soporte</h4>
+<nav class="flex flex-col gap-3">
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="proximamente.html?de=Help%20Center">Help Center</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="mailto:infodarkcross@gmail.com">Contact</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="proximamente.html?de=API%20Status">API Status</a>
+<a class="font-body-md text-on-surface-variant hover:text-primary transition-colors" href="proximamente.html?de=Seguridad">Seguridad</a>
+</nav>
+</div>
+</div>
+<div class="flex flex-col md:flex-row justify-between items-center pt-gutter border-t border-on-surface/[0.08] gap-4">
+<p class="font-body-md text-on-surface-variant text-[14px]">
+© 2026 DarkCross.
+</p>
+<div class="flex gap-6">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-[14px]" href="proximamente.html?de=Privacy%20Policy">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-[14px]" href="proximamente.html?de=Terms%20of%20Service">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-[14px]" href="proximamente.html?de=Cookie%20Policy">Cookie Policy</a>
+</div>
+</div>
+</div>
+</footer>
+<!-- Botón flotante de WhatsApp — el canal de venta real (puerta a puerta /
+     chat directo), no un formulario de contacto que nadie revisa. Falta
+     poner el número real en TU_NUMERO_WHATSAPP antes de publicar. -->
+<a
+  href="https://wa.me/593997097262?text=Hola%2C%20me%20gustar%C3%ADa%20saber%20m%C3%A1s%20sobre%20DarkCross"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Escribinos por WhatsApp"
+  class="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[#25D366] flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+>
+  <svg viewBox="0 0 24 24" class="w-8 h-8" fill="white" aria-hidden="true">
+    <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.9C21.96 6.45 17.5 2 12.04 2Zm5.8 14.03c-.24.68-1.4 1.33-1.93 1.4-.5.07-1.06.1-1.72-.11-.4-.12-.9-.29-1.55-.57-2.73-1.18-4.51-3.94-4.65-4.13-.14-.18-1.1-1.47-1.1-2.8 0-1.33.7-1.98.95-2.25.24-.27.53-.33.71-.33h.51c.16 0 .38-.03.59.45.24.55.8 1.9.87 2.04.07.14.11.3.02.48-.09.18-.14.29-.27.45-.14.16-.29.35-.41.47-.14.14-.28.28-.12.55.16.27.71 1.17 1.53 1.9 1.05.94 1.93 1.23 2.2 1.37.27.14.42.11.58-.07.16-.18.68-.79.86-1.06.18-.27.36-.22.6-.13.25.09 1.58.75 1.85.88.27.14.45.2.52.32.07.12.07.68-.17 1.36Z"/>
+  </svg>
+</a>
+<script>
+(function () {
+  var root = document.documentElement;
+
+  // Único lugar con las URLs de las dos apps — antes estaban hardcodeadas
+  // 12 veces (2 URLs × 6 ventanitas de menú Clínica/Gimnasio). Cambiar un
+  // dominio ahora es tocar esto, no buscar y reemplazar en todo el archivo.
+  var APP_URLS = {
+    clinica: 'http://localhost:5174',
+    fitness: 'http://localhost:5173',
+  };
+
+  document.querySelectorAll('[data-app]').forEach(function (a) {
+    var base = APP_URLS[a.getAttribute('data-app')];
+    a.href = base + (a.hasAttribute('data-registro') ? '/registro' : '');
+  });
+
+  function conectarGrupo(selector, atributo) {
+    var botones = document.querySelectorAll(selector);
+    botones.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var valor = btn.getAttribute(selector.replace(/^\[|\]$/g, ''));
+        root.setAttribute(atributo, valor);
+        botones.forEach(function (b) {
+          var activo = b === btn;
+          b.setAttribute('aria-pressed', String(activo));
+          b.classList.toggle('bg-primary-container', activo);
+          b.classList.toggle('text-on-primary', activo);
+          b.classList.toggle('text-on-surface-variant', !activo);
+        });
+      });
+    });
+  }
+
+  conectarGrupo('[data-vertical-btn]', 'data-vertical');
+  conectarGrupo('[data-billing-btn]', 'data-billing');
+
+  // Menú "¿Clínica o Gimnasio?" en cada botón de Iniciar sesión / Registrarse.
+  // Un solo backend, dos apps separadas — hace falta preguntar a cuál ir
+  // antes de mandar al visitante, en vez de asumirlo del toggle de arriba
+  // (que puede no haberse tocado nunca).
+  document.addEventListener('click', function (e) {
+    var trigger = e.target.closest('[data-vmenu-trigger]');
+    document.querySelectorAll('[data-vmenu-panel]').forEach(function (panel) {
+      var wrap = panel.closest('[data-vmenu]');
+      var wrapTrigger = wrap.querySelector('[data-vmenu-trigger]');
+      var esEsteTrigger = trigger && wrap.contains(trigger);
+      if (esEsteTrigger) {
+        panel.classList.toggle('hidden');
+      } else {
+        panel.classList.add('hidden');
+      }
+      wrapTrigger.setAttribute('aria-expanded', String(!panel.classList.contains('hidden')));
+    });
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('[data-vmenu-panel]').forEach(function (panel) {
+        panel.classList.add('hidden');
+        var wrap = panel.closest('[data-vmenu]');
+        wrap.querySelector('[data-vmenu-trigger]').setAttribute('aria-expanded', 'false');
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,663 @@
+/* ── Layout ──────────────────────────────────────────────────────────────── */
+
+.abonos {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+
+/* ── Resumen total ───────────────────────────────────────────────────────── */
+
+.abonos-resumen {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.1rem;
+}
+
+.resumen-label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.resumen-monto {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+/* ── Controles ───────────────────────────────────────────────────────────── */
+
+.abonos-controles {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.input-busqueda {
+  flex: 1;
+  min-width: 180px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.input-busqueda:focus { border-color: var(--color-primary); }
+
+.filtro-pills {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  background: var(--color-surface);
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pill:hover { border-color: var(--color-primary); color: var(--color-text); }
+
+.pill-activo {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-surface);
+  font-weight: 600;
+}
+
+.pill-activo:hover { background: var(--color-primary-dark); border-color: var(--color-primary-dark); color: #fff; }
+
+.pill-count {
+  background: rgba(255,255,255,0.3);
+  border-radius: 10px;
+  padding: 0 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.pill-activo .pill-count { background: rgba(255,255,255,0.35); }
+
+/* ── Lista ───────────────────────────────────────────────────────────────── */
+
+.abonos-lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── Card ────────────────────────────────────────────────────────────────── */
+
+.abono-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-left-width: 4px;
+  transition: box-shadow 0.15s;
+}
+
+.abono-card:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+
+.card-deudor { border-left-color: var(--color-danger); }
+.card-abono  { border-left-color: var(--color-warning); }
+
+/* Fila superior */
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.card-nombre {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.card-producto {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* Top-right: badge + X */
+.card-top-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.btn-eliminar-card {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  line-height: 1;
+}
+
+.btn-eliminar-card:hover {
+  background: rgba(220, 105, 105, 0.12);
+  color: var(--color-danger);
+}
+
+/* Badges */
+.badge {
+  padding: 0.2rem 0.65rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.badge-deudor {
+  background: rgba(220, 105, 105, 0.15);
+  color: #b83333;
+}
+
+.badge-abono {
+  background: rgba(240, 200, 120, 0.25);
+  color: rgb(120, 85, 10);
+}
+
+.badge-tipo-venta {
+  background: rgba(148, 163, 184, 0.18);
+  color: var(--color-text-muted);
+}
+
+.badge-tipo-membresia {
+  background: rgba(99, 102, 241, 0.12);
+  color: #5b5fcf;
+}
+
+/* Barra de progreso */
+.progreso-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.progreso-barra {
+  flex: 1;
+  height: 6px;
+  background: var(--color-border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progreso-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.card-deudor .progreso-fill { background: var(--color-danger); }
+.card-abono  .progreso-fill { background: var(--color-warning); }
+
+.progreso-pct {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  min-width: 2.5rem;
+  text-align: right;
+}
+
+/* Montos */
+.card-montos {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.monto-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.monto-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.monto-val {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.monto-val.pagado { color: var(--color-success-text); }
+.monto-val.saldo  { color: var(--color-danger); }
+
+.monto-saldo .monto-val { font-size: 1.1rem; }
+
+/* Footer */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.card-fecha {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.card-acciones {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-historial {
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: transparent;
+  font-size: 0.82rem;
+  font-family: inherit;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-historial:hover {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.btn-pagar {
+  padding: 0.35rem 0.9rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-primary);
+  font-size: 0.82rem;
+  font-family: inherit;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-pagar:hover { background: var(--color-primary-dark); }
+
+/* ── Estados vacíos ──────────────────────────────────────────────────────── */
+
+.estado-msg {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+}
+
+.estado-msg.error { color: var(--color-danger); }
+
+.estado-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.vacio-icono { font-size: 2.5rem; }
+
+/* ── Modales ─────────────────────────────────────────────────────────────── */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 42, 55, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+}
+
+.modal {
+  background: var(--color-surface);
+  border-radius: 14px;
+  padding: 1.75rem;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+}
+
+.modal-historial { max-width: 480px; }
+
+.modal-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.modal-header h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.modal-cliente {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.modal-saldo-info {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  background: var(--color-surface-alt);
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+}
+
+.modal-saldo-info strong { color: var(--color-danger); }
+
+/* Formulario pago */
+.pago-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-group label { font-size: 0.82rem; color: var(--color-text-muted); }
+
+.form-group input[type="text"],
+.form-group input[type="number"] {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.form-group input:focus { border-color: var(--color-primary); }
+
+.label-text { display: flex; align-items: center; gap: 0.2rem; }
+.required   { color: var(--color-danger); font-size: 0.85rem; }
+
+.metodo-toggle {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.metodo-btn {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  font-family: inherit;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.metodo-activo {
+  border-color: var(--color-primary);
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.form-error {
+  font-size: 0.82rem;
+  color: var(--color-danger);
+  background: rgba(220,105,105,0.08);
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+}
+
+.modal-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+}
+
+.btn-primario {
+  padding: 0.55rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-primary);
+  color: white;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-primario:hover:not(:disabled) { background: var(--color-primary-dark); }
+.btn-primario:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-secundario {
+  padding: 0.55rem 1.1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-secundario:hover:not(:disabled) { border-color: var(--color-primary); color: var(--color-text); }
+.btn-secundario:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-danger {
+  padding: 0.55rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-danger);
+  color: white;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-danger:hover:not(:disabled) { background: #b83333; }
+.btn-danger:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── Modal eliminar ──────────────────────────────────────────────────────── */
+
+.modal-eliminar {
+  max-width: 380px;
+  text-align: center;
+  gap: 0.75rem;
+}
+
+.eliminar-icono { font-size: 2.2rem; }
+
+.modal-eliminar h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.eliminar-desc {
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.eliminar-aviso {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  background: var(--color-surface-alt);
+  padding: 0.6rem 0.85rem;
+  border-radius: 8px;
+  line-height: 1.5;
+}
+
+.modal-eliminar .modal-acciones { justify-content: center; }
+
+/* ── Modal historial ─────────────────────────────────────────────────────── */
+
+.hist-resumen {
+  display: flex;
+  gap: 1.5rem;
+  background: var(--color-surface-alt);
+  border-radius: 10px;
+  padding: 0.9rem 1.1rem;
+}
+
+.hist-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.hist-stat span {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.hist-stat strong {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.hist-stat strong.pagado { color: var(--color-success-text); }
+.hist-stat strong.saldo  { color: var(--color-danger); }
+
+.hist-productos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.1rem 0;
+}
+
+.hist-producto-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  color: var(--color-text);
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.hist-concepto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-surface-alt);
+  border-radius: 8px;
+}
+
+.hist-concepto-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.hist-concepto-valor {
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.hist-titulo-pagos {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.hist-pagos-lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.hist-pago-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0.5rem;
+  background: var(--color-surface-alt);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.hist-pago-fecha  { color: var(--color-text-muted); min-width: 90px; }
+.hist-pago-metodo { color: var(--color-text-muted); font-size: 0.8rem; }
+.hist-pago-notas  { flex: 1; color: var(--color-text-muted); font-style: italic; }
+
+.hist-pago-comprobante {
+  color: var(--color-primary);
+  font-size: 0.8rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.hist-pago-comprobante:hover { text-decoration: underline; }
+
+.hist-pago-monto {
+  margin-left: auto;
+  font-weight: 700;
+  color: var(--color-success-text);
+}

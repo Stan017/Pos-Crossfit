@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Próximamente | DarkCross</title>
+<link href="https://fonts.googleapis.com/css2?family=Boldonse&family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=Outfit:wght@100..900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/src/main.css"/>
+</head>
+<body class="font-body-md overflow-x-hidden bg-background">
+<header class="w-full h-[72px] bg-surface/80 glass-nav border-b border-on-surface/[0.05]">
+<div class="max-w-container-max-width mx-auto flex items-center px-gutter h-full">
+<a class="font-wordmark text-xl text-primary tracking-tight" href="/">DarkCross</a>
+</div>
+</header>
+<main class="min-h-[calc(100vh-72px)] flex items-center justify-center px-gutter">
+<div class="max-w-md text-center">
+<span class="material-symbols-outlined text-primary" style="font-size: 48px;">construction</span>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mt-stack-md mb-stack-sm" id="titulo">Próximamente</h1>
+<p class="font-body-md text-on-surface-variant mb-stack-lg">
+Esta sección todavía no está lista. Si necesitás algo puntual mientras tanto, escribinos directo y te respondemos nosotros.
+</p>
+<div class="flex flex-col sm:flex-row gap-3 justify-center">
+<a href="mailto:infodarkcross@gmail.com" class="px-6 py-3 rounded-xl bg-primary text-on-primary font-bold hover:opacity-90 transition-opacity">Escribinos</a>
+<a href="/" class="px-6 py-3 rounded-xl border border-primary-container text-primary-container font-bold hover:bg-primary-container/5 transition-colors">Volver al inicio</a>
+</div>
+</div>
+</main>
+<script>
+  // El nombre de la sección viene por query string (?de=Docs) desde el link
+  // que trajo al visitante acá — evita tener un archivo .html casi idéntico
+  // por cada uno de los ~10 links del footer sin contenido real todavía.
+  var de = new URLSearchParams(location.search).get('de');
+  if (de) document.getElementById('titulo').textContent = de + ' — Próximamente';
+</script>
+</body>
+</html>

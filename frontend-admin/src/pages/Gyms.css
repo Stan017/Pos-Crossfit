@@ -1,0 +1,15 @@
+.tabla-gyms { font-size: 0.85rem; }
+
+.tabla-gyms select {
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.td-sub {
+  font-size: 0.75rem;
+  margin-top: 0.15rem;
+}

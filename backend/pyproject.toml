@@ -1,0 +1,39 @@
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+exclude = ["migrations", "tests/apply_schema.py"]
+
+[tool.ruff.lint]
+# E/F: pyflakes + pycodestyle (bugs reales: imports sin usar, variables sin
+# usar, comparaciones rotas). B: flake8-bugbear (trampas de Python: mutable
+# default arg, except demasiado ancho, etc). No se activa I (isort) ni
+# formato de estilo — este proyecto ya tiene su propia convención de
+# alineación en columnas (ver CLAUDE.md) y no vale la pena pelear con eso.
+select = ["E", "F", "B"]
+ignore = [
+    "E501",  # línea larga — hay bloques de HTML/SQL embebido donde cortar a mano empeora la legibilidad
+    # Column == True / Column == None son el idioma correcto de SQLAlchemy
+    # para construir SQL (IS TRUE / IS NULL) — a diferencia de Python plano,
+    # `is`/`is None` NO funciona ahí porque el operador está sobrecargado
+    # para devolver una expresión de columna, no un bool. Estas dos reglas
+    # asumen Python puro y son falsos positivos sistemáticos en este proyecto.
+    "E711",
+    "E712",
+]
+
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI inyecta dependencias llamando Depends(...)/Query(...)/etc como
+# valor por default del parámetro — es el mecanismo real de DI del
+# framework, no el bug de "mutable default arg" que B008 existe para
+# atrapar. Sin esto, ruff marca las ~200 rutas del proyecto en falso.
+extend-immutable-calls = [
+    "fastapi.Depends", "fastapi.Query", "fastapi.Path", "fastapi.Body",
+    "fastapi.Header", "fastapi.Cookie", "fastapi.Form", "fastapi.File",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011"]  # assert False es intencional en algunos tests de guard
+# Orden de import intencional: RequestIDMiddleware tiene que quedar definido
+# antes de import routes/* (las rutas importan cosas que dependen del
+# contextvar ya declarado arriba) — ver comentario en el propio archivo.
+"main.py" = ["E402"]

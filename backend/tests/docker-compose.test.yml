@@ -1,0 +1,25 @@
+# Postgres efímero para el test suite — NUNCA es la base real (Supabase).
+# tmpfs: sin persistencia a propósito, cada `docker compose down` la borra
+# entera. 5433, no 5432: en esta máquina ya hay algo escuchando en 5432.
+#
+# Uso:
+#   docker compose -f backend/tests/docker-compose.test.yml up -d --wait
+#   pytest backend/tests
+#
+# No se baja automático al terminar los tests (ver conftest.py) — dejarlo
+# arriba entre corridas hace que la segunda corrida en adelante no pague de
+# nuevo el costo de arrancar Postgres + aplicar las 33 migraciones.
+services:
+  test-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 1s
+      timeout: 3s
+      retries: 30

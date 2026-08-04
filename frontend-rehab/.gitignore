@@ -1,0 +1,17 @@
+# Credenciales — NUNCA al repo
+.env
+.env.*
+!.env.example
+
+# Build
+dist/
+node_modules/
+
+# Vercel
+.vercel
+
+# IDEs
+.vscode/
+.idea/
+.DS_Store
+

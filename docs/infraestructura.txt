@@ -1,0 +1,208 @@
+================================================================
+INFRAESTRUCTURA — CrossFit SaaS
+Decisiones de arquitectura, deploy, cache y base de datos
+================================================================
+
+
+STACK ACTUAL
+─────────────────────────────────────────────────────────────
+Browser → React (Vite) → FastAPI (Python) → PostgreSQL (Supabase)
+
+Sin cache. Sin cola. Sin CDN. Todo sincrónico.
+Suficiente para 5–50 boxes de CrossFit sin complicaciones.
+
+
+================================================================
+DEPLOY — LA MANERA ABURRIDA Y CORRECTA
+================================================================
+
+BACKEND (FastAPI)
+  Railway. Conectas el repo de GitHub, detecta Python, despliega
+  automático en cada push a main. ~$5/mes.
+  Sin servidores, sin nginx, sin Docker obligatorio.
+
+FRONTEND (React + Vite)
+  Vercel. Conectas el repo, detecta Vite, despliega. Free tier
+  suficiente para años. Build estático servido desde CDN global —
+  velocidad gratis sin configurar nada.
+
+STACK DE PRODUCCIÓN ACTUAL:
+  Vercel  (React estático)  →  gratis
+  Railway (FastAPI)         →  ~$10/mes
+  Supabase (PostgreSQL)     →  gratis / $25 Pro
+                               ──────────────
+  Total                     →  ~$10-35/mes
+
+
+================================================================
+CACHE — QUÉ CACHEAR Y CÓMO
+================================================================
+
+REGLA: no cachear hasta que haya un problema real de velocidad.
+
+ORDEN DE PRIORIDAD:
+
+1. Cache en el cliente (gratis, ya existe)
+   React guarda estado en memoria. Un GET /miembros/ que devuelve
+   200 registros se hace una vez por sesión si se maneja bien.
+   No necesitas Redis para esto.
+
+2. Cache HTTP con headers
+   FastAPI devuelve Cache-Control: max-age=60 en endpoints que
+   no cambian frecuente — planes, configuración del gym.
+   El browser cachea automáticamente.
+
+3. Cache en backend con Redis
+   Cuando un endpoint tarda más de 500ms y se llama muchas veces.
+   Ejemplo: dashboard de KPIs que agrega múltiples tablas.
+   Se guarda el resultado por 5 minutos.
+   Railway tiene Redis como add-on.
+
+CUÁNDO USAR REDIS: cuando tengas más de 100 gyms activos. No antes.
+
+
+================================================================
+SANIDAD DE LAS APIS / VELOCIDAD
+================================================================
+
+LO QUE YA TIENES:
+  - FastAPI es async — maneja concurrencia sin threads adicionales
+  - PostgreSQL con índices correctos — queries en O(log n)
+  - JWT stateless — no hay llamada a DB en cada request
+
+LO QUE FALTA Y VALE LA PENA AGREGAR:
+
+Timeouts en todas las queries:
+  En database.py, en create_engine agregar:
+  connect_args={
+      "connect_timeout": 10,
+      "options": "-c statement_timeout=5000"
+  }
+  Mata cualquier query que tarde más de 5 segundos.
+
+Health check con DB:
+  @app.get("/health")
+  def health(db: Session = Depends(get_db)):
+      db.execute(text("SELECT 1"))
+      return {"status": "ok"}
+
+  Railway y Render pegan ese endpoint cada 30 segundos y
+  reinician el proceso si falla.
+
+
+================================================================
+WEBHOOKS / EVENTOS — CUANDO LLEGUEN
+================================================================
+
+Patrón correcto sin cola de mensajes:
+  Un campo enviado_en en la tabla + job periódico.
+
+  Ejemplo — membresías que vencen en 3 días sin notificar:
+  SELECT * FROM membresias
+  WHERE fecha_fin = CURRENT_DATE + 3
+  AND notificado_en IS NULL;
+
+  Un endpoint interno que se llama cada hora (via cron-job.org
+  o Railway cron) procesa esa lista y marca notificado_en.
+
+  Sin Redis, sin RabbitMQ, sin Celery. Una tabla y un cron.
+
+
+================================================================
+VPS vs RAILWAY vs GOOGLE CLOUD
+================================================================
+
+RAILWAY
+  - Sin tocar servidores
+  - Conectas repo, despliega automático
+  - Factura por uso con cap configurable
+  - Ideal para 0 → 100 gyms
+
+GOOGLE CLOUD (GCP)
+  - Requiere Docker, IAM, Artifact Registry, cuentas de servicio
+  - Factura impredecible (CPU + RAM + requests + transferencia + logs)
+  - Diseñado para Netflix, no para 50 boxes de CrossFit
+  - Tiene sentido cuando necesitas BigQuery, Pub/Sub, Cloud Tasks
+  - No aplica en los próximos 2-3 años para este proyecto
+
+VPS (DigitalOcean Droplet / Vultr / Linode / Hetzner)
+  - Servidor virtual con CPU, RAM y disco dedicados
+  - Control total: instalas lo que quieras, configuras como quieras
+  - Factura fija sin sorpresas
+  - El costo: tú eres el responsable de updates, backups, monitoreo
+
+COMPARACIÓN DE PROVEEDORES VPS (~$12-15/mes):
+  DigitalOcean  →  2GB RAM, 50GB SSD   — Excelente DX, buena docs
+  Vultr         →  2GB RAM, 55GB SSD   — Más barato en algunos planes
+  Linode/Akamai →  2GB RAM, 50GB SSD   — Sólida, lleva más años
+  Hetzner       →  4GB RAM, 40GB SSD   — Mejor precio/rendimiento
+                                          (datacenters en Europa y EEUU)
+
+
+================================================================
+STACK OBJETIVO — SER DUEÑO DE LA BASE DE DATOS
+================================================================
+
+Cuando Railway + Supabase cueste más de $39/mes, hacer el salto:
+
+  Vercel (React)                    →  gratis
+  DigitalOcean Droplet ($24/mes)    →  FastAPI + nginx + SSL
+  DigitalOcean Managed Postgres     →  $15/mes
+                                       ──────────────
+  Total                             →  ~$39/mes FIJO PARA SIEMPRE
+
+POR QUÉ MANAGED POSTGRES Y NO TODO EN UN DROPLET:
+  Podrías meter todo en un solo Droplet y ahorrar $15/mes.
+  Si el Droplet se cae, se cae app y base de datos al mismo tiempo.
+  Con Managed Postgres separado:
+    - Backups automáticos diarios sin configurar nada
+    - Si el Droplet muere, la DB sobrevive intacta
+    - Nuevo Droplet + reconectar = minutos de downtime
+  Por $15/mes vale la pena.
+
+PASOS DE SETUP EN EL DROPLET (una sola vez):
+  1. Ubuntu 24.04 LTS
+  2. apt install python3, nginx, certbot
+  3. Clonar repo, instalar dependencias
+  4. Crear systemd service para FastAPI
+  5. Configurar nginx como reverse proxy
+  6. SSL con: certbot --nginx
+
+OPERACIÓN DIARIA:
+  Actualizar código  →  git pull && systemctl restart crossfit-api
+  Ver logs si falla  →  systemctl status crossfit-api
+  Backups de DB      →  DigitalOcean los hace solos, no tocas nada
+
+
+================================================================
+PROGRESIÓN RECOMENDADA
+================================================================
+
+  AHORA           Railway + Supabase          (cero ops)
+  CON INGRESOS    Railway + VPS Postgres       (DB propia, factura fija)
+  MADURO          VPS completo en DO           (control total)
+  500+ GYMS       Evaluar GCP/AWS o contratar alguien
+
+El salto al VPS completo se da cuando el producto está estable
+y ya hay ingresos para dedicar medio día a la migración.
+Cuando llegues a 500 gyms ya tienes ingresos para pagar a
+alguien que migre la infraestructura. No lo hagas antes.
+
+
+================================================================
+RESUMEN DE DECISIONES
+================================================================
+
+  Qué                   Cómo                    Cuándo complicar
+  ─────────────────────────────────────────────────────────────
+  Deploy backend        Railway                 Nunca (hasta VPS)
+  Deploy frontend       Vercel                  Nunca
+  Cache                 Headers HTTP → Redis    >100 gyms
+  Velocidad             Índices + timeouts       Ahora
+  Health check          /health con query DB     Ahora
+  Webhooks              Tabla + cron             Cuando se necesite
+  Cola de mensajes      No usar                 Cuando el cron no alcance
+  DB propia             DigitalOcean Managed     Cuando DO > $39/mes Railway
+  VPS completo          DigitalOcean Droplet     Cuando el producto sea estable
+
+================================================================

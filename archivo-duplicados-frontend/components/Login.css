@@ -1,0 +1,263 @@
+/* ── Overlay ─────────────────────────────────────────────── */
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* ── Card ────────────────────────────────────────────────── */
+.login-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 2.5rem 2rem 2rem;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 12px 32px rgba(28,42,55,0.08);
+}
+
+.login-card.shake {
+  animation: shake 0.45s ease;
+}
+
+.login-card.registro {
+  width: 600px;
+  max-width: 92vw;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Grilla de 2 columnas para el formulario de registro — de un solo tirón
+   vertical (obligaba a hacer scroll largo dentro de la card) a usar el
+   ancho real de la pantalla. .login-field-full rompe el par cuando un
+   campo necesita las dos columnas. */
+.registro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.25rem;
+  width: 100%;
+}
+
+.login-field-full {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 640px) {
+  .registro-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.login-link {
+  font-size: 0.82rem;
+  color: var(--color-primary-dark);
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: -0.25rem;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
+
+.login-highlight {
+  color: var(--color-primary-dark);
+  font-weight: 700;
+}
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%      { transform: translateX(-8px); }
+  40%      { transform: translateX(8px); }
+  60%      { transform: translateX(-6px); }
+  80%      { transform: translateX(6px); }
+}
+
+/* ── Logo ────────────────────────────────────────────────── */
+.login-logo {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -1px;
+}
+
+.login-sub {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: -0.75rem;
+  text-align: center;
+}
+
+/* ── Campo usuario ───────────────────────────────────────── */
+.login-field {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.login-field label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.login-field input {
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  border: 2px solid var(--color-border);
+  border-radius: 10px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.login-field input:focus {
+  border-color: var(--color-primary);
+}
+
+/* ── Contraseña con ojito de mostrar/ocultar ────────────────── */
+.login-field-password {
+  position: relative;
+}
+
+.login-field-password input {
+  padding-right: 2.5rem;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0.2rem;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  display: flex;
+}
+
+/* ── Puntos PIN ──────────────────────────────────────────── */
+.pin-dots {
+  display: flex;
+  gap: 0.6rem;
+  margin: 0.25rem 0;
+}
+
+.pin-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  background: transparent;
+  transition: all 0.15s ease;
+}
+
+.pin-dot.filled {
+  background: #1a2236;
+  border-color: #1a2236;
+}
+
+.pin-dot.error {
+  border-color: #ef4444;
+  background: #ef4444;
+}
+
+/* ── Error ───────────────────────────────────────────────── */
+.login-error {
+  font-size: 0.8rem;
+  color: var(--color-danger);
+  margin: -0.5rem 0;
+  font-weight: 500;
+}
+
+/* ── Teclado ─────────────────────────────────────────────── */
+.pin-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.pin-key {
+  height: 52px;
+  border: none;
+  border-radius: 12px;
+  background: #f1f5f9;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a2236;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  user-select: none;
+}
+
+.pin-key:hover:not(.empty) {
+  background: #e2e8f0;
+}
+
+.pin-key:active:not(.empty) {
+  transform: scale(0.93);
+  background: #d0d9e6;
+}
+
+.pin-key.empty {
+  background: transparent;
+  cursor: default;
+}
+
+.pin-key.pin-del {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.pin-key.pin-del:hover {
+  background: #fecaca;
+}
+
+.login-lockout {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.82rem;
+}
+
+/* ── Botón entrar ────────────────────────────────────────── */
+.login-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--color-text);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  margin-top: 0.25rem;
+}
+
+.login-btn:hover:not(:disabled) {
+  background: var(--color-sidebar);
+}
+
+.login-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.login-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

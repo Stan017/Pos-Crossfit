@@ -1,0 +1,13 @@
+-- ================================================================================
+-- MOVIDO: este archivo ya no es la fuente de verdad.
+--
+-- Su contenido (más docs/migration_add_ruc_gimnasios.sql y
+-- docs/migration_saas_suscripciones.sql) fue consolidado en
+-- backend/migrations/000_schema_base.sql, idempotente, como parte de la
+-- secuencia numerada de migraciones — antes vivía solo acá, fuera de
+-- backend/migrations/, y por eso una base de datos armada desde cero
+-- corriendo solo esa carpeta fallaba en 001_rls.sql.
+--
+-- Para levantar una base nueva: correr backend/migrations/*.sql en orden
+-- (000, 001, 002, ...), no este archivo.
+-- ================================================================================
