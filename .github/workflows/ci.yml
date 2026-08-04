@@ -1,0 +1,133 @@
+name: CI
+
+# push a master corre TODO (checks + deploy si pasan); pull_request corre
+# solo los checks — el job de deploy está guardado abajo para no correr en
+# PRs (no tiene sentido deployar código que todavía no se mergeó).
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+env:
+  REGION: us-central1
+  SERVICE: crossfit-api
+  IMAGE: crossfit-api
+
+jobs:
+  backend-tests:
+    name: Backend — ruff + pytest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+          cache-dependency-path: backend/requirements*.txt
+
+      - name: Instalar dependencias
+        working-directory: backend
+        run: pip install -r requirements.txt -r requirements-test.txt
+
+      - name: ruff
+        working-directory: backend
+        run: ruff check .
+
+      # El runner de GitHub Actions trae Docker + docker compose v2
+      # preinstalados — conftest.py levanta el mismo Postgres efímero
+      # (docker-compose.test.yml) que en local, sin config extra acá.
+      - name: pytest
+        working-directory: backend
+        run: pytest tests/
+
+  frontend-lint:
+    name: Frontend — eslint (${{ matrix.app }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [frontend, frontend-rehab, frontend-admin, frontend-shared]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: ${{ matrix.app }}/package-lock.json
+
+      - working-directory: ${{ matrix.app }}
+        run: npm ci
+
+      - working-directory: ${{ matrix.app }}
+        run: npm run lint
+
+  frontend-shared-tests:
+    name: Frontend — vitest (frontend-shared)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend-shared/package-lock.json
+
+      - working-directory: frontend-shared
+        run: npm ci
+
+      - working-directory: frontend-shared
+        run: npm test
+
+  deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-lint, frontend-shared-tests]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/crossfit/${{ env.IMAGE }}:${{ github.sha }} \
+            ./backend
+
+      - name: Push Docker image
+        run: |
+          docker push \
+            ${{ env.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/crossfit/${{ env.IMAGE }}:${{ github.sha }}
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy ${{ env.SERVICE }} \
+            --image ${{ env.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/crossfit/${{ env.IMAGE }}:${{ github.sha }} \
+            --platform managed \
+            --region ${{ env.REGION }} \
+            --allow-unauthenticated \
+            --set-env-vars "\
+              DATABASE_URL=${{ secrets.DATABASE_URL }},\
+              JWT_SECRET=${{ secrets.JWT_SECRET }},\
+              FRONTEND_ORIGINS=${{ secrets.FRONTEND_ORIGINS }}\
+            " \
+            --min-instances 0 \
+            --max-instances 10 \
+            --memory 512Mi \
+            --cpu 1
