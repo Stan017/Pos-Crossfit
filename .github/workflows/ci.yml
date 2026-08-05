@@ -104,11 +104,13 @@ jobs:
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
+      # El Dockerfile vive en la raíz del repo (COPY backend/... asume ese
+      # contexto) — el contexto de build tiene que ser la raíz, no ./backend.
       - name: Build Docker image
         run: |
           docker build \
             -t ${{ env.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/crossfit/${{ env.IMAGE }}:${{ github.sha }} \
-            ./backend
+            -f Dockerfile .
 
       - name: Push Docker image
         run: |
