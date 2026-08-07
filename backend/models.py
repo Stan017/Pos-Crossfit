@@ -66,7 +66,7 @@ class SaasEstado(str, enum.Enum):
 # services/planes_service.py para los topes de cada uno.
 class SaasTier(str, enum.Enum):
     trial         = "trial"
-    # $20/mes, mismos límites que trial (1 médico/coach + 1 asistente) pero
+    # $20/mes, mismos límites que trial (5 médicos/coaches + 1 asistente) pero
     # de pago — para operadores solo, sin necesidad de crecer más allá de lo
     # que trial ya ofrecía. Autoservicio: el gym lo puede pedir directo (ver
     # routes/suscripciones.py), a diferencia de estandar/clinica/personalizado.

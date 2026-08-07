@@ -18,10 +18,10 @@ from fastapi import HTTPException, status
 from models import Gimnasio, Instructor, Usuario, RolUsuario, SaasTier
 
 TIER_LIMITES: dict[SaasTier, dict[str, int | None]] = {
-    SaasTier.trial:         {"medicos": 1, "asistentes": 1},
-    SaasTier.solo:          {"medicos": 1, "asistentes": 1},
-    SaasTier.estandar:      {"medicos": 3, "asistentes": 2},
-    SaasTier.clinica:       {"medicos": 6, "asistentes": 3},
+    SaasTier.trial:         {"medicos": 5,  "asistentes": 1},
+    SaasTier.solo:          {"medicos": 5,  "asistentes": 1},
+    SaasTier.estandar:      {"medicos": 10, "asistentes": 2},
+    SaasTier.clinica:       {"medicos": 15, "asistentes": 3},
     SaasTier.personalizado: {"medicos": None, "asistentes": None},
 }
 
