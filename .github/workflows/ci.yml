@@ -124,7 +124,7 @@ jobs:
             --platform managed \
             --region ${{ env.REGION }} \
             --allow-unauthenticated \
-            --set-env-vars "^;^DATABASE_URL=${{ secrets.DATABASE_URL }};JWT_SECRET=${{ secrets.JWT_SECRET }};FRONTEND_ORIGINS=${{ secrets.FRONTEND_ORIGINS }}" \
+            --set-env-vars "^;^DATABASE_URL=${{ secrets.DATABASE_URL }};PLATFORM_DATABASE_URL=${{ secrets.PLATFORM_DATABASE_URL }};JWT_SECRET=${{ secrets.JWT_SECRET }};PLATFORM_ADMIN_KEY=${{ secrets.PLATFORM_ADMIN_KEY }};FRONTEND_ORIGINS=${{ secrets.FRONTEND_ORIGINS }}" \
             --min-instances 0 \
             --max-instances 10 \
             --memory 512Mi \
