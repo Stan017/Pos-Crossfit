@@ -16,6 +16,9 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         proximamente: resolve(__dirname, 'proximamente.html'),
+        privacyPolicy: resolve(__dirname, 'privacy-policy.html'),
+        termsOfService: resolve(__dirname, 'terms-of-service.html'),
+        cookiePolicy: resolve(__dirname, 'cookie-policy.html'),
       },
     },
   },
