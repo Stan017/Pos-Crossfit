@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://crossfit-api-bq2x5iyf5a-uc.a.run.app/$1" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ]
+}

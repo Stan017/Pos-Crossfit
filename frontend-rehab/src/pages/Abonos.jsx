@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { abonosAPI, membresiasAPI, ventasAPI, deudasAPI } from '../services/api'
-import { formatFecha } from '@shared/utils/fecha'
+import { formatFechaHora } from '@shared/utils/fecha'
 import { fmtMetodoPago } from '@shared/utils/formato'
 import { useFocusTrap } from '@shared/hooks/useFocusTrap'
 import '@shared/pages/Abonos.css'
@@ -274,7 +274,7 @@ export default function Abonos() {
                 </div>
 
                 <div className="card-footer">
-                  <span className="card-fecha">{formatFecha(r.fecha)}</span>
+                  <span className="card-fecha">{formatFechaHora(r.fecha)}</span>
                   <div className="card-acciones">
                     <button className="btn-historial" onClick={() => abrirHistorial(r)}>
                       Ver pagos
@@ -410,7 +410,7 @@ export default function Abonos() {
               <ul className="hist-pagos-lista">
                 {histModal.pagos.map(p => (
                   <li key={p.id} className="hist-pago-row">
-                    <span className="hist-pago-fecha">{formatFecha(p.fecha)}</span>
+                    <span className="hist-pago-fecha">{formatFechaHora(p.fecha)}</span>
                     <span className="hist-pago-metodo">{fmtMetodoPago(p.metodo)}</span>
                     {p.notas && <span className="hist-pago-notas">{p.notas}</span>}
                     {p.comprobante_url && (

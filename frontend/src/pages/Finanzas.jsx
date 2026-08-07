@@ -166,6 +166,9 @@ export default function Finanzas() {
               <div className="resumen-item">
                 <span className="resumen-label">Ingresos</span>
                 <span className="resumen-valor num positivo">${resumen.ingresos.toFixed(2)}</span>
+                <span className="resumen-hint">
+                  POS ${resumen.ingresos_ventas.toFixed(2)} + Membresías ${resumen.ingresos_membresias.toFixed(2)}
+                </span>
               </div>
 
               <div className="resumen-item">

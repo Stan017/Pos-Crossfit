@@ -77,7 +77,7 @@ def calcular_kpis(
     revenue_mes:      Optional[Decimal] = None
     ventas_mes_count: Optional[int]     = None
     if es_admin:
-        revenue_mes = redondear(
+        revenue_ventas = a_decimal(
             db.query(func.sum(Venta.total))
             .filter(
                 Venta.gym_id == gym_id,
@@ -87,6 +87,21 @@ def calcular_kpis(
             )
             .scalar() or 0
         )
+        # Mismo criterio que ingresos_membresias en finanzas.py: se reconoce
+        # el precio acordado de la membresía al momento de la venta (creado_en),
+        # no el cobro efectivo — igual que Venta.total ya cuenta una venta en
+        # abono completa, no solo lo pagado hasta ahora.
+        revenue_membresias = a_decimal(
+            db.query(func.sum(func.coalesce(Membresia.precio_acordado, Membresia.precio_pagado)))
+            .filter(
+                Membresia.gym_id == gym_id,
+                Membresia.estado != EstadoMembresia.cancelada,
+                extract("month", Membresia.creado_en) == mes_actual,
+                extract("year",  Membresia.creado_en) == anio_actual,
+            )
+            .scalar() or 0
+        )
+        revenue_mes = redondear(revenue_ventas + revenue_membresias)
         ventas_mes_count = (
             db.query(func.count(Venta.id))
             .filter(

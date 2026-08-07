@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func, extract
-from models import Gasto, Venta, VentaItem, EstadoVenta
+from models import Gasto, Venta, VentaItem, EstadoVenta, Membresia, EstadoMembresia
 from auth import require_admin, UsuarioActual, get_db_tenant
 from dinero import redondear
 from pydantic import BaseModel, Field, field_validator
@@ -119,8 +119,8 @@ def resumen_financiero(
     mes   = mes  or ahora.month
     anio  = anio or ahora.year
 
-    # Ingresos: ventas no canceladas del período
-    ingresos = (
+    # Ingresos POS: ventas no canceladas del período
+    ingresos_ventas = (
         db.query(func.sum(Venta.total))
         .filter(
             Venta.gym_id == usuario.gym_id,
@@ -130,6 +130,26 @@ def resumen_financiero(
         )
         .scalar() or 0
     )
+
+    # Ingresos por membresías: precio acordado de las membresías vendidas
+    # (creadas o renovadas) en el período — misma lógica que ingresos_ventas:
+    # se reconoce el valor total del contrato al momento de la venta, no el
+    # cobro efectivo (una membresía en abono ya cuenta acá, igual que una
+    # venta POS en abono ya cuenta en ingresos_ventas). coalesce cubre el
+    # mismo caso borde que precio_acordado_de() en membresia_service.py:
+    # precio_acordado es NULL solo en registros previos a la migración 003.
+    ingresos_membresias = (
+        db.query(func.sum(func.coalesce(Membresia.precio_acordado, Membresia.precio_pagado)))
+        .filter(
+            Membresia.gym_id == usuario.gym_id,
+            Membresia.estado != EstadoMembresia.cancelada,
+            extract("month", Membresia.creado_en) == mes,
+            extract("year",  Membresia.creado_en) == anio,
+        )
+        .scalar() or 0
+    )
+
+    ingresos = ingresos_ventas + ingresos_membresias
 
     # Costo de los productos vendidos (del período) — al precio de costo
     # vigente cuando se hizo la venta, no al precio de costo actual
@@ -174,9 +194,11 @@ def resumen_financiero(
     ganancia_neta  = redondear(ganancia_bruta - total_gastos)
 
     return {
-        "mes":              mes,
-        "anio":             anio,
-        "ingresos":         redondear(ingresos),
+        "mes":                  mes,
+        "anio":                 anio,
+        "ingresos":             redondear(ingresos),
+        "ingresos_ventas":      redondear(ingresos_ventas),
+        "ingresos_membresias":  redondear(ingresos_membresias),
         "costo_ventas":     redondear(costo_ventas),
         "ganancia_bruta":   ganancia_bruta,
         "gastos_fijos":     redondear(gastos_fijos),

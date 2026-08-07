@@ -39,7 +39,10 @@ def test_dashboard_refleja_membresia_venta_y_top_productos():
     body = client.get("/dashboard/").json()
     assert body["membresias_activas"] == 1
     assert body["nuevos_mes"] == 1            # fecha_ingreso = hoy
-    assert float(body["revenue_mes"]) == 60.0
+    # revenue_mes ahora suma ventas POS + membresías vendidas en el mes:
+    # $60 de la venta + $50 de precio_acordado de la membresía (cae al
+    # precio del plan porque crear_membresia() no pasa precio_acordado).
+    assert float(body["revenue_mes"]) == 110.0
     assert body["ventas_mes"] == 1
     assert float(body["deuda_total"]) == 0
     assert len(body["top_productos"]) == 1
