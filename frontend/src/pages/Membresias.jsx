@@ -88,6 +88,8 @@ export default function Membresias({ rol }) {
   const [form,      setForm]      = useState({
     miembro_id: '', plan_id: '', fecha_inicio: '', precio_pagado: '', metodo_pago: 'efectivo', notas: '', comprobante: null,
   })
+  const [busquedaMiembro, setBusquedaMiembro] = useState('')
+  const [sugerenciasAbiertas, setSugerenciasAbiertas] = useState(false)
 
   const modalRef = useFocusTrap(!!modal)
   const eliminarModalRef = useFocusTrap(!!eliminarModal)
@@ -139,6 +141,28 @@ export default function Membresias({ rol }) {
 
   const grupoActivo = grupos.find(g => g.plan_id === planActivo) ?? null
 
+  // Select nativo mostraba en iPad un picker de una fila a la vez (Safari
+  // renderiza <select> como wheel, no como lista) — con más de un puñado de
+  // miembros era imposible ubicar a alguien. Este combobox soluciona lo mismo
+  // en desktop y iPad: se puede tipear para filtrar o abrir y elegir de la
+  // lista completa.
+  const miembrosDisponibles = useMemo(() => {
+    const conMembresia = new Set(todas.filter(mem => ESTADOS_VIGENTES.has(mem.estado)).map(mem => mem.miembro_id))
+    return miembros.filter(m => !conMembresia.has(m.id))
+  }, [miembros, todas])
+
+  const sugerenciasMiembro = useMemo(() => {
+    const q = busquedaMiembro.trim().toLowerCase()
+    if (!q) return miembrosDisponibles
+    return miembrosDisponibles.filter(m => `${m.nombre} ${m.apellido}`.toLowerCase().includes(q))
+  }, [miembrosDisponibles, busquedaMiembro])
+
+  function seleccionarMiembro(m) {
+    setForm(prev => ({ ...prev, miembro_id: m.id }))
+    setBusquedaMiembro(`${m.nombre} ${m.apellido}`)
+    setSugerenciasAbiertas(false)
+  }
+
   const membresiasFiltradas = useMemo(() => {
     if (!grupoActivo) return []
     const ms = grupoActivo.membresias
@@ -168,6 +192,8 @@ export default function Membresias({ rol }) {
         comprobante:   null,
       })
       setRenovarId(null)
+      setBusquedaMiembro('')
+      setSugerenciasAbiertas(false)
       setModal('nueva')
     } catch {
       alert('No se pudieron cargar los datos.')
@@ -457,17 +483,37 @@ export default function Membresias({ rol }) {
               {modal === 'nueva' && (
                 <label>
                   <span className="label-text">Miembro <span className="required">*</span></span>
-                  <select name="miembro_id" value={form.miembro_id} onChange={handleChange} required>
-                    <option value="">— Seleccionar miembro —</option>
-                    {(() => {
-                      const conMembresia = new Set(todas.filter(mem => ESTADOS_VIGENTES.has(mem.estado)).map(mem => mem.miembro_id))
-                      return miembros
-                        .filter(m => !conMembresia.has(m.id))
-                        .map(m => (
-                          <option key={m.id} value={m.id}>{m.nombre} {m.apellido}</option>
-                        ))
-                    })()}
-                  </select>
+                  <div className="checkin-busqueda-wrap">
+                    <input
+                      type="text"
+                      className="input-busqueda checkin-input"
+                      placeholder="Escribe para buscar o toca para ver la lista..."
+                      value={busquedaMiembro}
+                      onChange={e => {
+                        setBusquedaMiembro(e.target.value)
+                        setForm(prev => ({ ...prev, miembro_id: '' }))
+                        setSugerenciasAbiertas(true)
+                      }}
+                      onFocus={() => setSugerenciasAbiertas(true)}
+                      onBlur={() => setTimeout(() => setSugerenciasAbiertas(false), 150)}
+                      autoComplete="off"
+                      required
+                    />
+                    {sugerenciasAbiertas && sugerenciasMiembro.length > 0 && (
+                      <ul className="checkin-sugerencias">
+                        {sugerenciasMiembro.map(m => (
+                          <li key={m.id} onMouseDown={() => seleccionarMiembro(m)}>
+                            {m.nombre} {m.apellido}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {sugerenciasAbiertas && busquedaMiembro.trim() && sugerenciasMiembro.length === 0 && (
+                      <ul className="checkin-sugerencias">
+                        <li style={{ cursor: 'default', color: 'var(--color-text-muted)' }}>Sin resultados</li>
+                      </ul>
+                    )}
+                  </div>
                 </label>
               )}
 
