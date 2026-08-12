@@ -19,6 +19,7 @@ os.environ["PLATFORM_ADMIN_KEY"]    = "test-platform-key-nunca-usar-en-produccio
 import pathlib
 import subprocess
 import sys
+import uuid
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))  # backend/
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))         # backend/tests/
@@ -30,6 +31,7 @@ from apply_schema import aplicar_schema_de_test  # noqa: E402
 
 import main  # noqa: E402 — recién ahora, con las env vars ya seteadas
 from limiter import limiter  # noqa: E402
+from routes import archivos, imagenes, membresias, suscripciones  # noqa: E402
 
 _SUPERUSER_URL = "postgresql://postgres:postgres@localhost:5433/postgres"
 
@@ -66,6 +68,56 @@ def _estado_limpio():
     conn.close()
     limiter.reset()
     yield
+
+
+@pytest.fixture(autouse=True)
+def _storage_fake(monkeypatch):
+    """
+    storage.py habla por HTTP con el bucket real de Supabase Storage — igual
+    que con Postgres (real-de-test en Docker, nunca la DB de producción), los
+    tests no deben tocar la Storage real: nada de red, nada de credenciales,
+    nada de basura acumulándose en el bucket de producción en cada corrida de
+    CI. Este fake en memoria reemplaza guardar_imagen/borrar_archivo/
+    obtener_archivo en cada módulo que los importó por nombre (monkeypatch
+    tiene que apuntar a cada uno, no a storage.py — "from storage import x"
+    ya ató el nombre en el momento del import) y reproduce el mismo contrato
+    (guarda bytes reales, valida la firma jpg/png, 404 si no existe) sin
+    salir del proceso.
+    """
+    from fastapi import HTTPException
+
+    _store = {}
+
+    def _fake_guardar_imagen(carpeta, gym_id, archivo):
+        contenido = archivo.file.read()
+        if contenido.startswith(b"\x89PNG\r\n\x1a\n"):
+            extension = "png"
+        elif contenido.startswith(b"\xff\xd8\xff"):
+            extension = "jpg"
+        else:
+            raise HTTPException(status_code=400, detail="Solo se aceptan imágenes JPG o PNG.")
+        nombre = f"{uuid.uuid4().hex}.{extension}"
+        _store[f"{carpeta}/{gym_id}/{nombre}"] = contenido
+        return f"/archivos/{carpeta}/{gym_id}/{nombre}"
+
+    def _fake_obtener_archivo(carpeta, gym_id, nombre):
+        contenido = _store.get(f"{carpeta}/{gym_id}/{nombre}")
+        if contenido is None:
+            raise HTTPException(status_code=404, detail="Archivo no encontrado.")
+        content_type = "image/png" if nombre.endswith(".png") else "image/jpeg"
+        return contenido, content_type
+
+    def _fake_borrar_archivo(url):
+        partes = url.strip("/").split("/")
+        if len(partes) != 4 or partes[0] != "archivos":
+            return
+        _, carpeta, gym_id, nombre = partes
+        _store.pop(f"{carpeta}/{gym_id}/{nombre}", None)
+
+    for modulo in (imagenes, membresias, suscripciones):
+        monkeypatch.setattr(modulo, "guardar_imagen", _fake_guardar_imagen)
+        monkeypatch.setattr(modulo, "borrar_archivo", _fake_borrar_archivo)
+    monkeypatch.setattr(archivos, "obtener_archivo", _fake_obtener_archivo)
 
 
 @pytest.fixture
