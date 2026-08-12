@@ -15,6 +15,7 @@ export default function Registro({ onRegistrado }) {
   const [password,        setPassword]        = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [mostrarPassword, setMostrarPassword] = useState(false)
+  const [aceptaTerminos,  setAceptaTerminos]  = useState(false)
   const [error,           setError]           = useState('')
   const [cargando,        setCargando]        = useState(false)
 
@@ -51,7 +52,7 @@ export default function Registro({ onRegistrado }) {
   }
 
   const completo = gymNombre && gymSlug && gymEmail && nombre && apellido && fechaNac
-    && email && password && passwordConfirm && !passwordsNoCoinciden
+    && email && password && passwordConfirm && !passwordsNoCoinciden && aceptaTerminos
 
   return (
     <div className="login-overlay">
@@ -185,6 +186,25 @@ export default function Registro({ onRegistrado }) {
 
         {passwordsNoCoinciden && <p className="login-error">Las contraseñas no coinciden.</p>}
         {error && <p className="login-error">{error}</p>}
+
+        <label className="login-terminos">
+          <input
+            type="checkbox"
+            checked={aceptaTerminos}
+            onChange={e => setAceptaTerminos(e.target.checked)}
+            required
+          />
+          <span>
+            Acepto los{' '}
+            <a href="https://crossfit-marketing.vercel.app/terms-of-service.html" target="_blank" rel="noopener noreferrer">
+              Términos y Condiciones
+            </a>{' '}
+            y la{' '}
+            <a href="https://crossfit-marketing.vercel.app/privacy-policy.html" target="_blank" rel="noopener noreferrer">
+              Política de Privacidad
+            </a>
+          </span>
+        </label>
 
         <button
           type="submit"
