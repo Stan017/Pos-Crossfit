@@ -223,10 +223,14 @@
   max-width: 520px;
   max-height: 90vh;
   overflow-y: auto;
+  overscroll-behavior: contain;
   box-shadow: 0 8px 32px rgba(0,0,0,0.18);
 }
 
-.modal-historial { max-width: 640px; }
+/* Más ancho que .modal normal: tiene que caber la tabla de "Sesiones de
+   terapia" (fecha/cita/terapeuta/estado/evolución) sin scroll horizontal
+   interno — con 640px quedaba apretada y difícil de leer. */
+.modal-historial { max-width: 900px; }
 
 .modal-header {
   display: flex;
