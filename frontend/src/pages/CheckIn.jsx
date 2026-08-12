@@ -242,7 +242,7 @@ export default function CheckIn() {
 
           {/* Filas de reservados */}
           {reservaciones.map(r => {
-            const yaAsistio = asistencias.some(a => a.miembro_id === r.miembro_id)
+            const yaAsistio = asistencias.some(a => a.miembro_id === r.miembro_id && a.clase_id === claseSeleccionada.id)
             const res = resultadosPorMiembro[r.miembro_id]
             return (
               <div key={r.id} className={`checkin-fila${yaAsistio ? ' fila-ok' : ''}`}>

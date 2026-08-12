@@ -65,7 +65,7 @@ function venceDisplay(m) {
 }
 
 
-export default function Membresias() {
+export default function Membresias({ rol }) {
   const [todas,      setTodas]      = useState([])
   const [cargando,   setCargando]   = useState(true)
   const [error,      setError]      = useState(null)
@@ -75,6 +75,14 @@ export default function Membresias() {
   const [modal,     setModal]     = useState(null)
   const [renovarId, setRenovarId] = useState(null)
   const [guardando, setGuardando] = useState(false)
+  const [eliminarModal, setEliminarModal] = useState(null)  // { id, nombre }
+  const [eliminando,    setEliminando]    = useState(false)
+  const [eliminarError, setEliminarError] = useState(null)
+
+  const [asistModal, setAsistModal] = useState(null)  // { id, nombre }
+  const [asistValor, setAsistValor] = useState('')
+  const [guardandoAsist, setGuardandoAsist] = useState(false)
+  const [asistError,     setAsistError]     = useState(null)
   const [miembros,  setMiembros]  = useState([])
   const [planes,    setPlanes]    = useState([])
   const [form,      setForm]      = useState({
@@ -82,6 +90,8 @@ export default function Membresias() {
   })
 
   const modalRef = useFocusTrap(!!modal)
+  const eliminarModalRef = useFocusTrap(!!eliminarModal)
+  const asistModalRef    = useFocusTrap(!!asistModal)
 
   // ─── Carga ───────────────────────────────────────────────────────────────────
 
@@ -177,6 +187,58 @@ export default function Membresias() {
   }
 
   function cerrarModal() { setModal(null); setRenovarId(null) }
+
+  function abrirEliminar(m) {
+    setEliminarError(null)
+    setEliminarModal({
+      id:     m.id,
+      nombre: m.miembro ? `${m.miembro.nombre} ${m.miembro.apellido}` : `#${m.miembro_id}`,
+    })
+  }
+
+  async function confirmarEliminar() {
+    if (!eliminarModal) return
+    try {
+      setEliminando(true)
+      setEliminarError(null)
+      await membresiasAPI.eliminar(eliminarModal.id)
+      setEliminarModal(null)
+      cargar()
+    } catch (err) {
+      setEliminarError(err.response?.data?.detail ?? 'No se pudo eliminar la membresía.')
+    } finally {
+      setEliminando(false)
+    }
+  }
+
+  function abrirAsistencias(m) {
+    setAsistError(null)
+    setAsistValor(String(m.clases_usadas ?? 0))
+    setAsistModal({
+      id:     m.id,
+      nombre: m.miembro ? `${m.miembro.nombre} ${m.miembro.apellido}` : `#${m.miembro_id}`,
+    })
+  }
+
+  async function guardarAsistencias(e) {
+    e.preventDefault()
+    const valor = parseInt(asistValor, 10)
+    if (isNaN(valor) || valor < 0 || valor > 90) {
+      setAsistError('Ingresa un número entre 0 y 90.')
+      return
+    }
+    try {
+      setGuardandoAsist(true)
+      setAsistError(null)
+      await membresiasAPI.editarAsistencias(asistModal.id, valor)
+      setAsistModal(null)
+      cargar()
+    } catch (err) {
+      setAsistError(err.response?.data?.detail ?? 'No se pudo guardar.')
+    } finally {
+      setGuardandoAsist(false)
+    }
+  }
 
   function handleChange(e) {
     const { name, value } = e.target
@@ -310,6 +372,7 @@ export default function Membresias() {
                           <th>Paciente</th>
                           <th>Inicio</th>
                           <th>Vence / Clases</th>
+                          {grupoActivo.plan_tipo !== 'tiempo' && <th>Asistidas</th>}
                           <th>Pagado</th>
                           <th>Estado</th>
                           <th>Acciones</th>
@@ -325,6 +388,21 @@ export default function Membresias() {
                             </td>
                             <td>{formatFecha(m.fecha_inicio)}</td>
                             <td className="num">{venceDisplay(m)}</td>
+                            {grupoActivo.plan_tipo !== 'tiempo' && (
+                              <td className="num">
+                                {rol === 'admin' ? (
+                                  <button
+                                    className="btn-link-num"
+                                    onClick={() => abrirAsistencias(m)}
+                                    title="Editar sesiones asistidas"
+                                  >
+                                    {m.clases_usadas ?? 0}
+                                  </button>
+                                ) : (
+                                  m.clases_usadas ?? 0
+                                )}
+                              </td>
+                            )}
                             <td className="num">${parseFloat(m.precio_pagado).toFixed(2)}</td>
                             <td>
                               <span className={`badge ${BADGE[m.estado] ?? 'badge-inactivo'}`}>
@@ -347,6 +425,13 @@ export default function Membresias() {
                               >
                                 Factura
                               </a>
+                              <button
+                                className="btn btn-sm btn-danger"
+                                onClick={() => abrirEliminar(m)}
+                                title="Corregir un registro mal cargado"
+                              >
+                                Eliminar
+                              </button>
                             </td>
                           </tr>
                         ))}
@@ -447,6 +532,68 @@ export default function Membresias() {
                 <button type="button" className="btn btn-outline" onClick={cerrarModal}>Cancelar</button>
                 <button type="submit" className="btn btn-primary" disabled={guardando}>
                   {guardando ? 'Guardando...' : 'Guardar'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal confirmar eliminación ────────────────────────────────────── */}
+      {eliminarModal && (
+        <div className="modal-overlay" onClick={() => !eliminando && setEliminarModal(null)}>
+          <div className="modal" ref={eliminarModalRef} tabIndex={-1} onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>¿Eliminar esta membresía?</h2>
+              <button className="modal-close" onClick={() => setEliminarModal(null)} disabled={eliminando}>✕</button>
+            </div>
+            <p style={{ padding: '0 1.5rem' }}>
+              <strong>{eliminarModal.nombre}</strong> — esta acción no se puede deshacer.
+              Usala solo para corregir un registro mal cargado (plan equivocado, paciente
+              equivocado, etc.), no para cancelar una membresía real.
+            </p>
+            {eliminarError && <p className="mensaje-error" style={{ margin: '0 1.5rem' }}>{eliminarError}</p>}
+            <div className="modal-footer">
+              <button className="btn btn-outline" onClick={() => setEliminarModal(null)} disabled={eliminando}>
+                Cancelar
+              </button>
+              <button className="btn btn-danger" onClick={confirmarEliminar} disabled={eliminando}>
+                {eliminando ? 'Eliminando...' : 'Sí, eliminar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal editar asistencias ──────────────────────────────────────── */}
+      {asistModal && (
+        <div className="modal-overlay" onClick={() => !guardandoAsist && setAsistModal(null)}>
+          <div className="modal" ref={asistModalRef} tabIndex={-1} onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Editar sesiones asistidas</h2>
+              <button className="modal-close" onClick={() => setAsistModal(null)} disabled={guardandoAsist}>✕</button>
+            </div>
+            <form className="modal-form" onSubmit={guardarAsistencias}>
+              <p style={{ margin: '0 0 0.5rem' }}>
+                <strong>{asistModal.nombre}</strong> — usalo para dejar constancia de
+                sesiones hechas antes de usar el sistema, o para corregir el conteo.
+              </p>
+              <label>
+                <span className="label-text">Sesiones asistidas <span className="required">*</span></span>
+                <input
+                  type="number" min="0" max="90" step="1"
+                  value={asistValor}
+                  onChange={e => setAsistValor(e.target.value)}
+                  autoFocus required
+                />
+              </label>
+              {asistError && <p className="mensaje-error">{asistError}</p>}
+              <div className="modal-footer">
+                <button type="button" className="btn btn-outline" onClick={() => setAsistModal(null)} disabled={guardandoAsist}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn btn-primary" disabled={guardandoAsist}>
+                  {guardandoAsist ? 'Guardando...' : 'Guardar'}
                 </button>
               </div>
             </form>

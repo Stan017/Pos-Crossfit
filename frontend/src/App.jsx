@@ -116,7 +116,7 @@ export default function App() {
               <Route path="/instructores" element={<Instructores />} />
               <Route path="/checkin"    element={<CheckIn />}    />
               <Route path="/miembros"   element={<Miembros />}   />
-              <Route path="/membresias" element={<Membresias />} />
+              <Route path="/membresias" element={<Membresias rol={sesion.rol} />} />
               <Route path="/planes"     element={<Planes />}     />
               <Route path="/cobros"     element={<Cobros />}     />
               <Route path="/inventario" element={<Inventario />} />

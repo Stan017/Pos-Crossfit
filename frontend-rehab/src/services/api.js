@@ -136,13 +136,17 @@ export const membresiasAPI = {
   historialMiembro: (miembroId) => api.get(`/membresias/historial/${miembroId}`),
   registrarPago:  (id, data)    => api.post(`/membresias/${id}/pagos`, aFormData(data)),
   saldo:          (id)          => api.get(`/membresias/${id}/saldo`),
+  eliminar:       (id)          => api.delete(`/membresias/${id}`),
+  editarAsistencias: (id, clases_usadas) => api.patch(`/membresias/${id}/asistencias`, { clases_usadas }),
 }
 
 // ── Check-in ──────────────────────────────────────────────────────────────────
 
 export const checkinAPI = {
-  registrar: (data)       => api.post('/checkin/', data),
-  listar:    (params = {})=> api.get('/checkin/', { params }),
+  registrar:        (data)       => api.post('/checkin/', data),
+  listar:           (params = {})=> api.get('/checkin/', { params }),
+  editarNotas:       (id, notas) => api.patch(`/checkin/${id}`, { notas }),
+  sesionesPaciente:  (miembroId) => api.get(`/checkin/paciente/${miembroId}/sesiones`),
 }
 
 // ── Usuarios (staff) ──────────────────────────────────────────────────────────

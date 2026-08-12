@@ -64,14 +64,22 @@ class Base(DeclarativeBase):
 # implícitamente después de un commit (ej. el refresh() post-commit que
 # disparó todo esto). set_config con is_local=true acá: se re-setea en cada
 # transacción de todos modos, no hace falta que sobreviva más que eso.
-if not DEBUG:
-    @event.listens_for(SessionLocal, "after_begin")
-    def _set_rls_gym_id(session, transaction, connection):
-        gym_id = session.info.get("rls_gym_id", "")
-        connection.execute(
-            text("SELECT set_config('app.current_gym_id', :gid, true)"),
-            {"gid": gym_id},
-        )
+#
+# Esto NUNCA se gatea con DEBUG — encontrado el 2026-08-11 al notar que
+# login() fallaba con "Credenciales inválidas" en local con credenciales
+# correctas: DEBUG=true corría contra la MISMA Postgres real con RLS (no
+# contra SQLite ni un rol sin restricciones, como asumía este código
+# heredado), y sin este listener toda query a una tabla con RLS devuelve 0
+# filas — el mismo fail-safe que ya rompió /auth/login en producción una
+# vez (ver login() en routes/auth.py). DEBUG solo controla /docs y cookies
+# no-secure; el aislamiento por tenant se aplica siempre, local o no.
+@event.listens_for(SessionLocal, "after_begin")
+def _set_rls_gym_id(session, transaction, connection):
+    gym_id = session.info.get("rls_gym_id", "")
+    connection.execute(
+        text("SELECT set_config('app.current_gym_id', :gid, true)"),
+        {"gid": gym_id},
+    )
 
 
 def get_db():
@@ -103,11 +111,10 @@ def get_db():
 # de nuevo después de cada commit.
 def set_rls_gym_id(db, gym_id) -> None:
     db.info["rls_gym_id"] = str(gym_id)
-    if not DEBUG:
-        db.execute(
-            text("SELECT set_config('app.current_gym_id', :gid, true)"),
-            {"gid": str(gym_id)},
-        )
+    db.execute(
+        text("SELECT set_config('app.current_gym_id', :gid, true)"),
+        {"gid": str(gym_id)},
+    )
 
 
 # ── Conexión separada para platform admin (bypassea RLS a propósito) ─────────

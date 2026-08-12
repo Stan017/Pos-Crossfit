@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
-import { miembrosAPI, membresiasAPI, facturasAPI, historialMedicoAPI } from '../services/api'
+import { miembrosAPI, membresiasAPI, facturasAPI, historialMedicoAPI, checkinAPI } from '../services/api'
 import { formatFecha, formatFechaHora, hoyLocal, parseFechaLocal } from '@shared/utils/fecha'
 import { fmtMetodoPago, estadoMembresiaBadge } from '@shared/utils/formato'
 import { useFocusTrap } from '@shared/hooks/useFocusTrap'
@@ -13,6 +13,13 @@ const TIPO_HISTORIAL = {
 }
 
 const NUEVO_REGISTRO_VACIO = { tipo: 'patologia', descripcion: '', fecha: '', activa: true, notas: '' }
+
+const ESTADO_SESION = {
+  asistio:   { label: 'Asistió',    clase: 'badge-ok' },
+  no_show:   { label: 'No show',    clase: 'badge-danger' },
+  cancelada: { label: 'Cancelada',  clase: 'badge-inactivo' },
+  pendiente: { label: 'Pendiente',  clase: 'badge-inactivo' },
+}
 
 const FORM_VACIO = {
   nombre:              '',
@@ -156,6 +163,8 @@ export default function Miembros() {
   const [nuevoRegistro,     setNuevoRegistro]     = useState(NUEVO_REGISTRO_VACIO)
   const [mostrarFormFicha,  setMostrarFormFicha]  = useState(false)
   const [guardandoRegistro, setGuardandoRegistro] = useState(false)
+  const [notasSesionModal, setNotasSesionModal]   = useState(null) // { sesion, valor }
+  const [guardandoNotaSesion, setGuardandoNotaSesion] = useState(false)
 
   const modalRef       = useFocusTrap(!!modal)
   const histModalRef   = useFocusTrap(!!histModal)
@@ -327,14 +336,45 @@ export default function Miembros() {
   // ─── Perfil (identidad + biometría + membresía + historial médico) ─────────
 
   async function abrirPerfil(m) {
-    setPerfilModal({ miembro: m, cargando: true, error: null, historial: [] })
+    setPerfilModal({ miembro: m, cargando: true, error: null, historial: [], sesiones: [] })
     setNuevoRegistro(NUEVO_REGISTRO_VACIO)
     setMostrarFormFicha(false)
     try {
-      const res = await historialMedicoAPI.listarPaciente(m.id)
-      setPerfilModal(prev => ({ ...prev, cargando: false, historial: res.data }))
+      const [resHistorial, resSesiones] = await Promise.all([
+        historialMedicoAPI.listarPaciente(m.id),
+        checkinAPI.sesionesPaciente(m.id),
+      ])
+      setPerfilModal(prev => ({ ...prev, cargando: false, historial: resHistorial.data, sesiones: resSesiones.data }))
     } catch {
       setPerfilModal(prev => ({ ...prev, cargando: false, error: 'No se pudo cargar la ficha médica.' }))
+    }
+  }
+
+  function abrirNotaSesion(sesion) {
+    setNotasSesionModal({ sesion, valor: sesion.notas || '' })
+  }
+
+  function cerrarNotaSesion() {
+    setNotasSesionModal(null)
+  }
+
+  async function guardarNotaSesion() {
+    if (!notasSesionModal) return
+    try {
+      setGuardandoNotaSesion(true)
+      const valor = notasSesionModal.valor.trim() || null
+      await checkinAPI.editarNotas(notasSesionModal.sesion.asistencia_id, valor)
+      setPerfilModal(prev => ({
+        ...prev,
+        sesiones: prev.sesiones.map(s =>
+          s.reservacion_id === notasSesionModal.sesion.reservacion_id ? { ...s, notas: valor } : s
+        ),
+      }))
+      setNotasSesionModal(null)
+    } catch (err) {
+      alert(err.response?.data?.detail ?? 'No se pudo guardar la nota.')
+    } finally {
+      setGuardandoNotaSesion(false)
     }
   }
 
@@ -805,6 +845,84 @@ export default function Miembros() {
                   )}
                 </>
               )}
+
+              <h3 style={{ fontSize: '0.95rem', margin: '1.5rem 0 0.75rem' }}>Sesiones de terapia</h3>
+              {perfilModal.cargando ? null : perfilModal.error ? (
+                <p className="estado-msg error">{perfilModal.error}</p>
+              ) : perfilModal.sesiones && perfilModal.sesiones.length === 0 ? (
+                <p className="vacio">Sin sesiones registradas todavía.</p>
+              ) : (
+                <div className="tabla-wrapper">
+                  <table className="tabla">
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Cita</th>
+                        <th>Terapeuta</th>
+                        <th>Estado</th>
+                        <th>Evolución / terapia aplicada</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(perfilModal.sesiones || []).map(s => {
+                        const info = ESTADO_SESION[s.estado] ?? { label: s.estado, clase: 'badge-inactivo' }
+                        return (
+                          <tr key={s.reservacion_id}>
+                            <td>{s.fecha ? formatFecha(s.fecha) : '—'}{s.hora_inicio ? ` ${s.hora_inicio}` : ''}</td>
+                            <td>{s.clase_nombre || '—'}</td>
+                            <td>{s.terapeuta || '—'}</td>
+                            <td><span className={`badge ${info.clase}`}>{info.label}</span></td>
+                            <td>
+                              {s.asistencia_id ? (
+                                <button className="btn-link-num" onClick={() => abrirNotaSesion(s)} title="Editar evolución">
+                                  {s.notas || 'Agregar nota'}
+                                </button>
+                              ) : '—'}
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Modal: editar nota de una sesión de terapia ───────────────────── */}
+      {notasSesionModal && (
+        <div className="modal-overlay" onClick={cerrarNotaSesion}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Evolución / terapia aplicada</h2>
+              <button className="modal-close" onClick={cerrarNotaSesion}>✕</button>
+            </div>
+            <div style={{ padding: '1rem 1.25rem' }}>
+              <p style={{ margin: '0 0 0.75rem', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                {notasSesionModal.sesion.clase_nombre}
+                {notasSesionModal.sesion.fecha && ` · ${formatFecha(notasSesionModal.sesion.fecha)}`}
+              </p>
+              <textarea
+                autoFocus
+                rows={5}
+                value={notasSesionModal.valor}
+                onChange={e => setNotasSesionModal(prev => ({ ...prev, valor: e.target.value }))}
+                placeholder="Qué se hizo en esta terapia..."
+                style={{
+                  width: '100%', boxSizing: 'border-box', resize: 'vertical',
+                  padding: '0.5rem 0.75rem', border: '1px solid var(--color-border)',
+                  borderRadius: 6, fontSize: '0.9rem', background: 'var(--color-surface)',
+                  fontFamily: 'inherit',
+                }}
+              />
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-outline" onClick={cerrarNotaSesion}>Cancelar</button>
+              <button className="btn btn-primary" onClick={guardarNotaSesion} disabled={guardandoNotaSesion}>
+                {guardandoNotaSesion ? 'Guardando...' : 'Guardar'}
+              </button>
             </div>
           </div>
         </div>

@@ -161,18 +161,6 @@ from auth import require_gym_activa
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    if not DEBUG:
-        # No hay forma de arreglar esto sin saber dónde se va a deployar (todavía
-        # sin decidir) — el fix real es migrar storage.py a un storage externo
-        # (Supabase Storage, S3, etc.) cuando se sepa el destino. Mientras tanto,
-        # que sea un warning ruidoso al arrancar y no un 404 silencioso después
-        # del primer redeploy que borre el filesystem.
-        logger.warning(
-            "Storage de archivos (comprobantes, fotos de producto) usa disco local "
-            "del proceso — no sobrevive un redeploy en un host sin filesystem "
-            "persistente. Migrar storage.py a un storage externo antes de depender "
-            "de estos archivos en producción."
-        )
     yield
 
 app = FastAPI(

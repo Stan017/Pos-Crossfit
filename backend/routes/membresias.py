@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session, joinedload
 from typing import Optional
 from datetime import date, timedelta
 
-from models import Membresia, Miembro, Plan, EstadoMembresia, MetodoPago, PagoMembresia
-from auth import get_usuario_actual, UsuarioActual, get_db_tenant
+from models import Membresia, Miembro, Plan, EstadoMembresia, MetodoPago, PagoMembresia, Asistencia
+from auth import get_usuario_actual, require_admin, UsuarioActual, get_db_tenant
 from dinero import a_decimal, redondear
 from storage import guardar_imagen, borrar_archivo
 from security import sanitizar
@@ -48,6 +48,16 @@ class DatosMembresiaForm(BaseModel):
     @classmethod
     def limpiar_texto(cls, v):
         return sanitizar(v)
+
+
+# 90 como tope absoluto (no relativo a clases_total del plan): así lo pidió
+# el usuario — es un límite de cordura contra un typo (ej. 9999), no una
+# regla de negocio atada al plan. A propósito NO se valida contra
+# clases_total: un admin puede querer dejar constancia de que un paciente
+# ya venía con más sesiones previas de las que el plan actual define, sin
+# que el sistema se lo impida.
+class AsistidasInput(BaseModel):
+    clases_usadas: int = Field(ge=0, le=90)
 
 
 def form_membresia(
@@ -566,3 +576,121 @@ def saldo_membresia(
         "total_pagado":    total_pagado,
         "saldo":           saldo,
     }
+
+
+@router.delete("/{membresia_id}", status_code=status.HTTP_204_NO_CONTENT)
+def eliminar_membresia(
+    membresia_id: int,
+    db:           Session        = Depends(get_db_tenant),
+    usuario:      UsuarioActual  = Depends(get_usuario_actual),
+):
+    """
+    Corrige una membresía mal cargada (plan equivocado, miembro equivocado,
+    etc.) borrándola por completo — no un "cancelar", que dejaría la fila y
+    seguiría bloqueando "el miembro ya tiene una membresía vigente" en
+    crear_membresia. Cualquier staff logueado, no solo admin — mismo criterio
+    que eliminar_venta_y_restaurar_stock (quien comete el error de carga es
+    típicamente quien necesita poder corregirlo). A diferencia de esa ruta,
+    acá sí se permite borrar con pagos ya registrados: pagos_membresia SÍ está
+    en la lista de tablas auditadas en audit.py (a diferencia de pagos de venta,
+    excluidos a propósito), así que borrar no hace desaparecer el rastro.
+    """
+    # with_for_update(of=Membresia) serializa esto contra un check-in
+    # concurrente sobre la misma membresía (checkin.py también lockea la fila
+    # con FOR UPDATE): sin esto, un check-in podía colarse entre el chequeo de
+    # "tiene_asistencias" de abajo y el DELETE, y el DELETE terminaba chocando
+    # con la FK de asistencias.membresia_id (sin cascada) — un IntegrityError
+    # crudo (500) en vez del 409 limpio que esta ruta ya sabe devolver.
+    # of=Membresia (no un FOR UPDATE liso): pagos es un LEFT JOIN (una
+    # membresía puede no tener pagos todavía) y Postgres rechaza "FOR UPDATE"
+    # sobre el lado nullable de un outer join — hay que decirle explícitamente
+    # qué tabla lockear.
+    membresia = (
+        db.query(Membresia)
+        .options(joinedload(Membresia.pagos))
+        .filter(Membresia.id == membresia_id, Membresia.gym_id == usuario.gym_id)
+        .with_for_update(of=Membresia)
+        .first()
+    )
+    if not membresia:
+        raise HTTPException(status_code=404, detail="Membresía no encontrada.")
+
+    # Asistencia.membresia_id no tiene cascada (a propósito: un check-in ya
+    # realizado es evidencia real de que el paciente/miembro asistió, no se
+    # borra solo porque la membresía que lo respaldaba se está corrigiendo).
+    tiene_asistencias = db.query(Asistencia.id).filter(
+        Asistencia.membresia_id == membresia_id,
+    ).first() is not None
+    if tiene_asistencias:
+        raise HTTPException(
+            status_code=409,
+            detail="No se puede eliminar: esta membresía ya tiene asistencias registradas.",
+        )
+
+    # Los archivos se borran DESPUÉS del commit, no antes: si el borrado del
+    # archivo corriera primero y el commit fallara por cualquier motivo, la
+    # membresía seguiría viva en la DB pero ya habría perdido su comprobante.
+    comprobantes = [p.comprobante_url for p in membresia.pagos if p.comprobante_url]
+
+    db.delete(membresia)  # cascada: membresia.pagos (PagoMembresia)
+    db.commit()
+
+    for url in comprobantes:
+        borrar_archivo(url)
+
+
+@router.patch("/{membresia_id}/asistencias")
+def editar_asistencias(
+    membresia_id: int,
+    datos:        AsistidasInput,
+    db:           Session        = Depends(get_db_tenant),
+    usuario:      UsuarioActual  = Depends(require_admin),
+):
+    """
+    Ajusta a mano el conteo de sesiones asistidas — pensado para el caso de
+    onboarding: una clínica/box que se pasa a este sistema con un paciente/
+    miembro que ya venía con sesiones previas hechas fuera del programa
+    (o antes de digitalizar), así el saldo de clases restantes arranca
+    correcto en vez de en 0. Solo admin, a diferencia de eliminar_membresia
+    — esto no es corregir un error de carga propio, es una operación
+    delicada de re-conteo. with_for_update() por el mismo motivo que
+    checkin.py: dos ediciones (o una edición + un check-in) concurrentes no
+    deben pisarse.
+    """
+    membresia = db.query(Membresia).filter(
+        Membresia.id     == membresia_id,
+        Membresia.gym_id == usuario.gym_id,
+    ).with_for_update().first()
+    if not membresia:
+        raise HTTPException(status_code=404, detail="Membresía no encontrada.")
+
+    if membresia.fecha_fin is not None or membresia.clases_total is None:
+        raise HTTPException(
+            status_code=409,
+            detail="Este plan es por tiempo, no lleva conteo de sesiones asistidas.",
+        )
+
+    # calcular_estado() trata "vencida" como estado terminal y no lo recalcula
+    # desde clases_usadas/clases_total — correcto cuando renovar_membresia lo
+    # marcó a propósito al reemplazar esta fila por una nueva, pero incorrecto
+    # cuando llegó a "vencida" solo porque checkin.py agotó las clases (que es
+    # justo el caso que este endpoint existe para corregir). Distinguimos los
+    # dos casos igual que ya_renovada en renovar_membresia: si existe otra
+    # membresía vigente para el mismo miembro, esta fue reemplazada de verdad
+    # y "vencida" se respeta tal cual; si no, se fuerza un recálculo real.
+    if membresia.estado == EstadoMembresia.vencida:
+        fue_reemplazada = db.query(Membresia.id).filter(
+            Membresia.gym_id     == usuario.gym_id,
+            Membresia.miembro_id == membresia.miembro_id,
+            Membresia.id         != membresia.id,
+            Membresia.estado.in_(ESTADOS_VIGENTES),
+        ).first() is not None
+        if not fue_reemplazada:
+            membresia.estado = EstadoMembresia.activa
+
+    membresia.clases_usadas = datos.clases_usadas
+    saldo = calcular_saldo(membresia, db)
+    _sincronizar_estado(membresia, saldo)
+    db.commit()
+    db.refresh(membresia)
+    return _serializar(membresia, saldo)

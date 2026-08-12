@@ -1,11 +1,10 @@
-import os
 import re
 
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import Response
 
 from auth import get_usuario_actual, UsuarioActual
-from storage import DIR_STATIC, CARPETAS_VALIDAS
+from storage import CARPETAS_VALIDAS, obtener_archivo
 
 router = APIRouter()
 
@@ -24,12 +23,12 @@ def servir_archivo(
         raise HTTPException(status_code=404, detail="Archivo no encontrado.")
 
     # El gym_id de la URL tiene que ser el del usuario logueado — así es como
-    # se evita que un gym vea los comprobantes/fotos de otro gym.
+    # se evita que un gym vea los comprobantes/fotos de otro gym. El bucket de
+    # Supabase Storage es privado, así que esto es el único chequeo de acceso
+    # que existe — sin esto, cualquier usuario autenticado podría pedir el
+    # archivo de cualquier otro gym con solo cambiar el gym_id en la URL.
     if gym_id != str(usuario.gym_id):
         raise HTTPException(status_code=403, detail="No autorizado.")
 
-    ruta = os.path.join(DIR_STATIC, carpeta, gym_id, nombre)
-    if not os.path.isfile(ruta):
-        raise HTTPException(status_code=404, detail="Archivo no encontrado.")
-
-    return FileResponse(ruta)
+    contenido, content_type = obtener_archivo(carpeta, gym_id, nombre)
+    return Response(content=contenido, media_type=content_type)

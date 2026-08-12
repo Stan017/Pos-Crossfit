@@ -18,12 +18,16 @@ export default function CheckIn() {
   const [miembro,     setMiembro]     = useState(null)
   const [resultado,   setResultado]   = useState(null)
   const [cargando,    setCargando]    = useState(false)
+  const [notasCheckin,setNotasCheckin]= useState('')
 
   const [asistencias, setAsistencias] = useState([])
   const [cargandoLog, setCargandoLog] = useState(true)
   const [errorLog,    setErrorLog]    = useState(null)
   const [fechaDesde,  setFechaDesde]  = useState(hoyLocal())
   const [fechaHasta,  setFechaHasta]  = useState(hoyLocal())
+
+  const [notasModal,   setNotasModal]   = useState(null) // { asistencia, valor }
+  const [guardandoNotas, setGuardandoNotas] = useState(false)
 
   const inputRef     = useRef(null)
   const limpiarTimer = useRef(null)
@@ -60,6 +64,7 @@ export default function CheckIn() {
     setBusqueda('')
     setSugerencias([])
     setResultado(null)
+    setNotasCheckin('')
     setResultadosPorMiembro({})
     setReservaciones([])
     setCargandoReservaciones(true)
@@ -130,6 +135,7 @@ export default function CheckIn() {
     setBusqueda('')
     setSugerencias([])
     setResultado(null)
+    setNotasCheckin('')
     inputRef.current?.focus()
   }
 
@@ -156,12 +162,27 @@ export default function CheckIn() {
     }
   }
 
+  async function marcarNoShow(reservacion_id) {
+    if (!claseSeleccionada) return
+    try {
+      await horariosAPI.actualizarReservacion(reservacion_id, { estado: 'no_show' })
+      const r2 = await horariosAPI.listarReservaciones(claseSeleccionada.id)
+      setReservaciones(r2.data)
+    } catch (err) {
+      alert(err.response?.data?.detail ?? 'No se pudo marcar como no-show.')
+    }
+  }
+
   async function registrar() {
     if (!miembro || !claseSeleccionada) return
     try {
       setCargando(true)
       setResultado(null)
-      const res = await checkinAPI.registrar({ miembro_id: miembro.id, clase_id: claseSeleccionada.id })
+      const res = await checkinAPI.registrar({
+        miembro_id: miembro.id,
+        clase_id:   claseSeleccionada.id,
+        notas:      notasCheckin.trim() || undefined,
+      })
       const advertencia = res.data?.advertencia ?? null
       setResultado({
         ok: true,
@@ -175,6 +196,7 @@ export default function CheckIn() {
         setReservaciones(r2.data)
       } catch {}
       cargarClases()
+      setNotasCheckin('')
       if (limpiarTimer.current) clearTimeout(limpiarTimer.current)
       limpiarTimer.current = setTimeout(limpiarMiembro, advertencia ? 4000 : 1800)
     } catch (err) {
@@ -182,6 +204,30 @@ export default function CheckIn() {
       setResultado({ ok: false, advertencia: null, mensaje: detail })
     } finally {
       setCargando(false)
+    }
+  }
+
+  function abrirNotas(a) {
+    setNotasModal({ asistencia: a, valor: a.notas || '' })
+  }
+
+  function cerrarNotas() {
+    setNotasModal(null)
+  }
+
+  async function guardarNotas() {
+    if (!notasModal) return
+    try {
+      setGuardandoNotas(true)
+      await checkinAPI.editarNotas(notasModal.asistencia.id, notasModal.valor.trim() || null)
+      setAsistencias(prev => prev.map(a =>
+        a.id === notasModal.asistencia.id ? { ...a, notas: notasModal.valor.trim() || null } : a
+      ))
+      setNotasModal(null)
+    } catch (err) {
+      alert(err.response?.data?.detail ?? 'No se pudo guardar la nota.')
+    } finally {
+      setGuardandoNotas(false)
     }
   }
 
@@ -242,25 +288,41 @@ export default function CheckIn() {
 
           {/* Filas de reservados */}
           {reservaciones.map(r => {
-            const yaAsistio = asistencias.some(a => a.miembro_id === r.miembro_id)
+            const yaAsistio = asistencias.some(a => a.miembro_id === r.miembro_id && a.clase_id === claseSeleccionada.id)
             const res = resultadosPorMiembro[r.miembro_id]
             return (
               <div key={r.id} className={`checkin-fila${yaAsistio ? ' fila-ok' : ''}`}>
                 <span className="checkin-fila-nombre">
                   {r.miembro ? `${r.miembro.nombre} ${r.miembro.apellido}` : `#${r.miembro_id}`}
                 </span>
-                <span className="checkin-fila-tag badge badge-inactivo">Reservado</span>
+                {r.estado === 'no_show' ? (
+                  <span className="checkin-fila-tag badge badge-danger">No show</span>
+                ) : r.estado === 'cancelada' ? (
+                  <span className="checkin-fila-tag badge badge-inactivo">Cancelada</span>
+                ) : (
+                  <span className="checkin-fila-tag badge badge-inactivo">Reservado</span>
+                )}
                 {res?.ok === false && (
                   <span style={{ fontSize: '0.78rem', color: 'var(--color-danger)', flex: 1 }}>{res.mensaje}</span>
                 )}
-                {yaAsistio || res?.ok === true
-                  ? <span className="badge badge-ok">✓ Presente</span>
-                  : <button
+                {r.estado === 'confirmada' && (yaAsistio || res?.ok === true) && (
+                  <span className="badge badge-ok">✓ Presente</span>
+                )}
+                {r.estado === 'confirmada' && !yaAsistio && res?.ok !== true && (
+                  <>
+                    <button
                       className="btn btn-sm btn-primary"
                       onClick={() => registrarDirecto(r.miembro_id)}
                       disabled={cargando}
                     >Check-in</button>
-                }
+                    <button
+                      className="btn btn-sm btn-outline"
+                      style={{ color: 'var(--color-danger)', borderColor: 'var(--color-danger)' }}
+                      onClick={() => marcarNoShow(r.id)}
+                      disabled={cargando}
+                    >No show</button>
+                  </>
+                )}
               </div>
             )
           })}
@@ -307,9 +369,23 @@ export default function CheckIn() {
 
           {/* Feedback inline */}
           {(miembro && !resultado) && (
-            <div className="checkin-fila" style={{ background: 'var(--color-surface-alt)' }}>
-              <span className="checkin-fila-nombre">✓ {miembro.nombre} {miembro.apellido}</span>
-              <button className="btn btn-sm btn-outline" onClick={limpiarMiembro}>Limpiar</button>
+            <div className="checkin-fila" style={{ background: 'var(--color-surface-alt)', flexDirection: 'column', alignItems: 'stretch', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span className="checkin-fila-nombre">✓ {miembro.nombre} {miembro.apellido}</span>
+                <button className="btn btn-sm btn-outline" onClick={limpiarMiembro}>Limpiar</button>
+              </div>
+              <textarea
+                placeholder="Notas de la sesión (opcional) — qué se hizo en esta terapia..."
+                value={notasCheckin}
+                onChange={e => setNotasCheckin(e.target.value)}
+                rows={2}
+                style={{
+                  width: '100%', boxSizing: 'border-box', resize: 'vertical',
+                  padding: '0.5rem 0.75rem', border: '1px solid var(--color-border)',
+                  borderRadius: 6, fontSize: '0.9rem', background: 'var(--color-surface)',
+                  fontFamily: 'inherit',
+                }}
+              />
             </div>
           )}
           {resultado && (
@@ -378,11 +454,54 @@ export default function CheckIn() {
                   <td className="td-nombre">
                     {a.miembro ? `${a.miembro.nombre} ${a.miembro.apellido}` : `#${a.miembro_id}`}
                   </td>
-                  <td>{a.notas || '—'}</td>
+                  <td>
+                    <button className="btn-link-num" onClick={() => abrirNotas(a)} title="Editar evolución">
+                      {a.notas || 'Agregar nota'}
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* ─── Modal: editar nota de evolución ───────────────────────────────── */}
+      {notasModal && (
+        <div className="modal-overlay" onClick={cerrarNotas}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Evolución / terapia aplicada</h2>
+              <button className="modal-close" onClick={cerrarNotas}>✕</button>
+            </div>
+            <div style={{ padding: '1rem 1.25rem' }}>
+              <p style={{ margin: '0 0 0.75rem', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                {notasModal.asistencia.miembro
+                  ? `${notasModal.asistencia.miembro.nombre} ${notasModal.asistencia.miembro.apellido}`
+                  : `#${notasModal.asistencia.miembro_id}`}
+                {' · '}{formatFechaHora(notasModal.asistencia.fecha)}
+              </p>
+              <textarea
+                autoFocus
+                rows={5}
+                value={notasModal.valor}
+                onChange={e => setNotasModal(prev => ({ ...prev, valor: e.target.value }))}
+                placeholder="Qué se hizo en esta terapia..."
+                style={{
+                  width: '100%', boxSizing: 'border-box', resize: 'vertical',
+                  padding: '0.5rem 0.75rem', border: '1px solid var(--color-border)',
+                  borderRadius: 6, fontSize: '0.9rem', background: 'var(--color-surface)',
+                  fontFamily: 'inherit',
+                }}
+              />
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-outline" onClick={cerrarNotas}>Cancelar</button>
+              <button className="btn btn-primary" onClick={guardarNotas} disabled={guardandoNotas}>
+                {guardandoNotas ? 'Guardando...' : 'Guardar'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

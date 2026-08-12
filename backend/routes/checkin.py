@@ -182,6 +182,7 @@ def _serializar_asistencia(a: Asistencia) -> dict:
         "id":           a.id,
         "miembro_id":   a.miembro_id,
         "membresia_id": a.membresia_id,
+        "clase_id":     a.clase_id,
         "fecha":        a.fecha,
         "notas":        a.notas,
         "miembro": {
@@ -225,3 +226,103 @@ def listar_asistencias(
     if fecha_hasta:
         query = query.filter(Asistencia.fecha < inicio_dia_ecuador_en_utc(fecha_hasta + timedelta(days=1)))
     return [_serializar_asistencia(a) for a in query.order_by(Asistencia.fecha.desc()).all()]
+
+
+class NotasInput(BaseModel):
+    notas: Optional[str] = None
+
+    @field_validator("notas", mode="before")
+    @classmethod
+    def limpiar_texto(cls, v):
+        return sanitizar(v)
+
+
+@router.patch("/{asistencia_id}")
+def editar_notas_asistencia(
+    asistencia_id: int,
+    datos:         NotasInput,
+    db:            Session        = Depends(get_db_tenant),
+    usuario:       UsuarioActual  = Depends(get_usuario_actual),
+):
+    """
+    Corrige/completa la nota de evolución de una asistencia ya registrada.
+    En la práctica el terapeuta suele documentar después de terminar la
+    sesión, no en el instante del check-in — por eso esto vive separado
+    del POST. Sin gating de admin: es documentación clínica de rutina,
+    no una acción destructiva (mismo criterio que el POST de check-in).
+    """
+    asistencia = db.query(Asistencia).filter(
+        Asistencia.id     == asistencia_id,
+        Asistencia.gym_id == usuario.gym_id,
+    ).first()
+    if not asistencia:
+        raise HTTPException(status_code=404, detail="Asistencia no encontrada.")
+
+    asistencia.notas = datos.notas
+    db.commit()
+    db.refresh(asistencia)
+    return _serializar_asistencia(asistencia)
+
+
+@router.get("/paciente/{miembro_id}/sesiones")
+def listar_sesiones_paciente(
+    miembro_id: int,
+    db:         Session        = Depends(get_db_tenant),
+    usuario:    UsuarioActual  = Depends(get_usuario_actual),
+):
+    """
+    Historial completo de citas de un paciente (asistió / no-show / cancelada /
+    pendiente), para la ficha médica en Miembros. A diferencia de GET "/" (que
+    solo lista asistencias reales), esto parte de las Reservaciones para poder
+    reflejar también las citas a las que el paciente no llegó.
+    """
+    miembro = db.query(Miembro).filter(
+        Miembro.id     == miembro_id,
+        Miembro.gym_id == usuario.gym_id,
+    ).first()
+    if not miembro:
+        raise HTTPException(status_code=404, detail="Miembro no encontrado.")
+
+    reservaciones = (
+        db.query(Reservacion)
+        .join(Clase, Reservacion.clase_id == Clase.id)
+        .options(joinedload(Reservacion.clase).joinedload(Clase.instructor))
+        .filter(
+            Reservacion.gym_id     == usuario.gym_id,
+            Reservacion.miembro_id == miembro_id,
+        )
+        .order_by(Clase.fecha.desc(), Clase.hora_inicio.desc())
+        .all()
+    )
+
+    reservacion_ids = [r.id for r in reservaciones]
+    asistencia_por_reservacion = {}
+    if reservacion_ids:
+        asistencias = db.query(Asistencia).filter(
+            Asistencia.gym_id         == usuario.gym_id,
+            Asistencia.reservacion_id.in_(reservacion_ids),
+        ).all()
+        asistencia_por_reservacion = {a.reservacion_id: a for a in asistencias}
+
+    resultado = []
+    for r in reservaciones:
+        asistencia = asistencia_por_reservacion.get(r.id)
+        if r.estado == EstadoReservacion.no_show:
+            estado = "no_show"
+        elif r.estado == EstadoReservacion.cancelada:
+            estado = "cancelada"
+        elif asistencia:
+            estado = "asistio"
+        else:
+            estado = "pendiente"
+        resultado.append({
+            "reservacion_id": r.id,
+            "asistencia_id":  asistencia.id if asistencia else None,
+            "fecha":          r.clase.fecha if r.clase else None,
+            "hora_inicio":    r.clase.hora_inicio.strftime("%H:%M") if r.clase and r.clase.hora_inicio else None,
+            "clase_nombre":   r.clase.nombre if r.clase else None,
+            "terapeuta":      r.clase.instructor.nombre if r.clase and r.clase.instructor else None,
+            "estado":         estado,
+            "notas":          asistencia.notas if asistencia else None,
+        })
+    return resultado
