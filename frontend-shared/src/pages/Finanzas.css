@@ -411,7 +411,13 @@
   box-shadow: 0 20px 60px rgba(0,0,0,0.25);
   width: 100%;
   max-width: 460px;
-  overflow: hidden;
+  /* overflow:hidden bloqueaba cualquier scroll interno — en viewports
+     bajos el contenido que no entraba quedaba directamente inalcanzable,
+     sin importar el dispositivo. */
+  max-height: 90vh;
+  max-height: 90dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-header {

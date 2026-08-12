@@ -114,7 +114,11 @@
 
 .td-link:hover { color: var(--color-text); }
 
-.td-acciones { display: flex; gap: 0.5rem; }
+/* flex-wrap: en iPad, con el sidebar de planes (210px) restando ancho a la
+   tabla, 3 botones en una columna de acciones fuerzan overflow-x en la
+   tabla y "Eliminar" queda fuera del viewport visible sin pista de que hay
+   que scrollear — envolver a una segunda línea los mantiene alcanzables. */
+.td-acciones { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 
 /* ── Badges ──────────────────────────────────────────────────────────────── */
 
@@ -221,8 +225,14 @@
   border-radius: 10px;
   width: 100%;
   max-width: 520px;
+  /* vh en iPadOS Safari se calcula contra el viewport "grande" (barra de
+     Safari colapsada), más alto que lo realmente visible cuando la barra
+     está mostrada — el modal se recortaba y el contenido de abajo quedaba
+     inalcanzable. dvh se recalcula contra el viewport visible real. */
   max-height: 90vh;
+  max-height: 90dvh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   box-shadow: 0 8px 32px rgba(0,0,0,0.18);
 }

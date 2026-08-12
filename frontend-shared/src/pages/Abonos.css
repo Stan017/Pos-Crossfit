@@ -361,6 +361,13 @@
   padding: 1.75rem;
   width: 100%;
   max-width: 420px;
+  /* Sin max-height/overflow no había ningún mecanismo de scroll — en
+     viewports bajos (iPad con teclado abierto, landscape) el contenido
+     que no entraba quedaba directamente inalcanzable. */
+  max-height: 90vh;
+  max-height: 90dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
