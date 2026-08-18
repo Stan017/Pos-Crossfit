@@ -1,8 +1,8 @@
 import { useState, lazy, Suspense, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, NavLink, Link } from 'react-router-dom'
 import Login from './components/Login'
 import Registro from './components/Registro'
-import { authAPI, setSessionExpiredHandler } from './services/api'
+import { authAPI, setSessionExpiredHandler, setSuscripcionVencidaHandler } from './services/api'
 
 const Dashboard  = lazy(() => import('./pages/Dashboard'))
 const CheckIn    = lazy(() => import('./pages/CheckIn'))
@@ -47,9 +47,22 @@ const NAV = [
 export default function App() {
   // null = verificando sesión, false = sin sesión, objeto = autenticado
   const [sesion, setSesion] = useState(null)
+  // Mensaje del backend cuando un request cualquiera devuelve 402 (suscripción
+  // vencida/suspendida) — null mientras no haya pasado. No se limpia solo: se
+  // queda visible hasta que el usuario lo cierra o entra a Ajustes a resolverlo.
+  const [avisoSuscripcion, setAvisoSuscripcion] = useState(null)
 
   useEffect(() => {
     setSessionExpiredHandler(() => setSesion(false))
+    // /ajustes es a donde el aviso manda a resolver esto — su propia sección
+    // "Datos del negocio" también está gateada por require_gym_activa y
+    // dispara otro 402 apenas se entra ahí. Sin este chequeo, el aviso
+    // reaparecía inmediatamente después de que el usuario lo cerraba desde
+    // el link "Ir a Ajustes", pisando la sección de Suscripción que ya
+    // explica lo mismo en detalle.
+    setSuscripcionVencidaHandler(detail => {
+      if (!window.location.pathname.startsWith('/ajustes')) setAvisoSuscripcion(detail)
+    })
     authAPI.me()
       .then(({ data }) => setSesion(data))
       .catch(() => setSesion(false))
@@ -108,6 +121,14 @@ export default function App() {
           </button>
         </nav>
         <main className="content">
+          {avisoSuscripcion && (
+            <div className="aviso-suscripcion-vencida">
+              <span className="material-symbols-outlined">error</span>
+              <span>{avisoSuscripcion}</span>
+              <Link to="/ajustes" onClick={() => setAvisoSuscripcion(null)}>Ir a Ajustes</Link>
+              <button type="button" onClick={() => setAvisoSuscripcion(null)} aria-label="Cerrar aviso">✕</button>
+            </div>
+          )}
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/"           element={<POS />}        />

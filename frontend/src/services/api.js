@@ -40,9 +40,19 @@ api.interceptors.request.use(config => {
 let refreshing = false
 let queue = []
 let onSessionExpired = null
+let onSuscripcionVencida = null
 
 export function setSessionExpiredHandler(fn) {
   onSessionExpired = fn
+}
+
+// Dispara cuando el backend responde 402 (require_gym_activa, auth.py) — el
+// gym se quedó sin suscripción vigente. A diferencia del 401, esto no es un
+// problema de sesión: el login sigue funcionando, así que cada pantalla que
+// dependía del dato roto se quedaba mostrando "No se pudo conectar con el
+// servidor", un mensaje que no le dice al usuario qué pasó ni a dónde ir.
+export function setSuscripcionVencidaHandler(fn) {
+  onSuscripcionVencida = fn
 }
 
 function flushQueue(error) {
@@ -53,6 +63,11 @@ function flushQueue(error) {
 api.interceptors.response.use(
   res => res,
   async err => {
+    if (err.response?.status === 402) {
+      if (onSuscripcionVencida) onSuscripcionVencida(err.response.data?.detail)
+      return Promise.reject(err)
+    }
+
     const original = err.config
     if (err.response?.status !== 401 || original._retry) return Promise.reject(err)
 

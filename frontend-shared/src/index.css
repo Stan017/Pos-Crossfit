@@ -165,6 +165,53 @@ body {
   overflow-y: auto;
 }
 
+/* ── Aviso de suscripción vencida ────────────────────────────────────────── */
+/* Se dispara desde cualquier pantalla ante un 402 (ver services/api.js,
+   setSuscripcionVencidaHandler) — reemplaza el "No se pudo conectar con el
+   servidor" genérico que salía antes en cada página que dependía de un
+   endpoint bloqueado por suscripción vencida. */
+
+.aviso-suscripcion-vencida {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--color-warning);
+  color: var(--color-warning-text);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.aviso-suscripcion-vencida .material-symbols-outlined {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.aviso-suscripcion-vencida span:nth-child(2) {
+  flex: 1;
+}
+
+.aviso-suscripcion-vencida a {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.aviso-suscripcion-vencida button {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1rem;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.aviso-suscripcion-vencida button:hover { opacity: 1; }
+
 /* ── Tipografía global ───────────────────────────────────────────────────── */
 
 h1 {

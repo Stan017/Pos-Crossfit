@@ -28,8 +28,6 @@ export default function Login({ onLogin }) {
       const detail = err.response?.data?.detail
       if (err.response?.status === 401) {
         setError(detail || 'Credenciales inválidas.')
-      } else if (err.response?.status === 402) {
-        setError('Suscripción vencida. Contacta al administrador de la plataforma.')
       } else {
         setError(detail || 'Error al conectar con el servidor.')
       }
